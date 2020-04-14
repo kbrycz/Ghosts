@@ -224,6 +224,7 @@
             var app = new Vue({
             el: '#app',
             data: {
+                isHost: false,
                 roomName: '',
                 usersInLobby: [],
                 users: [],
@@ -246,7 +247,6 @@
                 ghostsWin: false,
                 playersWin: false,
                 kickedPlayerName: '',
-                ghostsList: []
             },
             created: function () {
                 // Current server that we are connecting to
@@ -254,20 +254,31 @@
             },
             mounted: function () {
                 // socket functions for listening to server updates
-
-                socket.on('createRoom', function (room) {
-                    console.log('Created room: ' + room);
-                    this.roomName = room;
+                socket.on('createRoom', function (obj) {
+                    console.log('Created room: ' + obj.room);
+                    app.isHost = true;
+                    app.roomName = obj.room;
                     app.state = 6
                 })
                 socket.on('joinRoom', function (obj) {
-                    console.log('Joined room: ' + obj.room);
+                    if (app.isHost) {
+                        app.updateInformation();
+                    }
                     if (obj.id === socket.id) {
-                        this.roomName = obj.room
+                        console.log('Joined room: ' + obj.room);
+                        app.roomName = obj.room
                         app.state = 0;
                     }
                 })
-
+                socket.on('updateInformation', function (obj) {
+                    app.roomName = obj.roomName;
+                    app.usersInLobby = obj.usersInLobby;
+                    app.users = obj.users;
+                    app.gameData = obj.gameData;
+                    app.ghostsRemaining = obj.ghostsRemaining;
+                    app.playersLeft = obj.playersLeft;
+                    app.neededVotes = obj.neededVotes;
+                })
                 socket.on('join', function (user) {
                     console.log('pushing to users')
                     app.users.push(user);
@@ -276,8 +287,11 @@
                 })
                 socket.on('playerJoin', function (user) {
                     // Gets the indv player array set up
-                    console.log('Getting individual data for player');
-                    app.player = user;
+                    if (user.socketid === socket.id) {
+                        console.log('Getting individual data for player');
+                        app.player = user;
+                        console.log(app.player)
+                    }
                 })
                 socket.on('start', function (startObj) {
                     // starts the game and changes state for everyone
@@ -407,6 +421,19 @@
                         socket.emit('joinRoom', this.roomName);
                     }
                 },
+                updateInformation() {
+                    console.log("Updating info for all users");
+                    let obj = {
+                        'roomName': this.roomName,
+                        'usersInLobby': this.usersInLobby,
+                        'users': this.users,
+                        'gameData': this.gameData,
+                        'ghostsRemaining': this.ghostsRemaining,
+                        'playersLeft': this.playersLeft,
+                        'neededVotes': this.neededVotes,
+                    }
+                    socket.emit('updateInformation', obj);
+                },
                 setUsername: function () {
                     // Sets the username of the user and sends to server
                     console.log("Setting username")
@@ -418,7 +445,6 @@
                             'roomName': this.roomName,
                         }
                         socket.emit('join', obj);
-
                         this.username = '';
                         this.state = 1;
                     }
@@ -443,7 +469,7 @@
                         this.gameData.playerCount += parseInt(this.gameData.ghostCount)
                         this.createState = 2;
                         this.gameCreator = false;
-                        gameData.roomName = this.roomName
+                        this.gameData.roomName = this.roomName
                         socket.emit('gameData', this.gameData);
                         alert("Success! Game was sent to server!");
                     }

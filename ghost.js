@@ -19,8 +19,12 @@ io.on('connection', (socket) => {
         } else {
             rooms.push(roomName)
             socket.join(roomName)
+            let obj = {
+                'room': roomName,
+                'id': socket.id
+            }
             console.log('created room: ' + roomName);
-            io.in(roomName).emit('createRoom', roomName);
+            io.in(roomName).emit('createRoom', obj);
         }
     }) 
     socket.on('joinRoom', (roomName) => {
@@ -38,12 +42,16 @@ io.on('connection', (socket) => {
         }
     }) 
 
+    socket.on('updateInformation', (obj) => {
+        io.in(obj.roomName).emit('updateInformation', obj);
+    })
     // STAGE 0
     socket.on('join', (obj) => {
         socket.username = obj.username;
         console.log(socket.username)
-        socket.in(obj.roomName).emit('playerJoin',
+        io.in(obj.roomName).emit('playerJoin',
         {
+            'socketid': socket.id,
             'name': socket.username,
             'id': idNumber, 
             'word': '',
@@ -53,6 +61,7 @@ io.on('connection', (socket) => {
         });
         io.in(obj.roomName).emit('join', 
         {
+            'socketid': socket.id,
             'name': socket.username,
             'id': idNumber, 
             'word': '',
