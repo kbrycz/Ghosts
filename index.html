@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="style/style.css">
+        <title>Ghosts</title>
+    </head>
+    <body>
+        <div id="app">
+            <!--------------HOME SCREEN----------------->
+            <div v-if="state === 5">
+                <div class="container">
+                    <div class="row screen-view">
+                        <div class="container login-view">
+                            <h2>Welcome to Ghosts Online</h2>
+                            <button v-on:click="createRoom">Create Room</button>
+                            <button v-on:click="state = 7">Join Room</button>
+                        </div>
+                    </div>
+                    <div class="row controller-view">
+                    </div>
+                </div>
+            </div>
+            <!--------------CREATE ROOM SCREEN----------------->
+            <div v-if="state === 6">
+                <div class="container">
+                    <div class="row screen-view">
+                        <div class="container login-view">
+                            <h2>Welcome to Ghosts Online</h2>
+                            <h3>Here is your invite code: </h3>
+                            <h4>{{roomName}}</h4>
+                            <button v-on:click="state = 0">Continue</button>
+                        </div>
+                    </div>
+                    <div class="row controller-view">
+                    </div>
+                </div>
+            </div>
+            <!--------------JOIN ROOM SCREEN----------------->
+            <div v-if="state === 7">
+                <div class="container">
+                    <div class="row screen-view">
+                        <div class="container login-view">
+                            <h2>Welcome to Ghosts Online</h2>
+                            <h3>Enter a room name to join</h3>
+                            <form @submit.prevent="joinRoom">
+                                <input type ="text" onkeyup="this.value = this.value.toUpperCase();" placeholder="Room name..." v-model:value="roomName" />
+                                <input type="submit" value = "Join" />
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row controller-view">
+                    </div>
+                </div>
+            </div>
+            <!--------------USERNAME SCREEN----------------->
+            <div v-if="state === 0">
+                <div class="container">
+                    <div class="row screen-view">
+                        <div class="container login-view">
+                            <h2>Welcome to Ghosts Online</h2>
+                            <h3>Please Enter a Username</h3>
+                            <form @submit.prevent="setUsername">
+                                <input type ="text" placeholder="Username..." v-model:value="username" />
+                                <input type="submit" value = "join" />
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row controller-view">
+                    </div>
+                </div>
+            </div>
+            <!--------------GAME SCREEN----------------->
+            <div v-if ="state === 1">
+                <div class="container">
+                    <div class="row screen-view">
+                        <div v-for="user in users" class="playerRow">
+                            <h4 v-if="user.id === player.id">
+                                {{user.name}} (you)
+                            </h4>
+                            <h4 v-else>{{user.name}}</h4>
+                        </div>
+                    </div>
+                    <div class="row controller-view">
+                        <div class="createButton" v-if="gameCreator === false">
+                            <div v-if="createState !== 2">
+                                <button v-on:click="gameCreator = true">Create a Game</button>
+                            </div>
+                            <div v-else>
+                                <button v-on:click="startGame">Start Game</button>
+                            </div>
+                        </div>
+                        <div class="input-numbers" v-else>
+                            <div v-if="createState === 0">
+                                <form @submit.prevent="createGamePart1">
+                                    <input type ="number" placeholder="number of ghosts" v-model:value="gameData.ghostCount" />
+                                    <input type ="number" placeholder="number of topics" v-model:value="gameData.topicCount" />
+                                    <input type ="number" placeholder="number of subtopics" v-model:value="gameData.subtopicCount" />
+                                    <input type="submit" value = "Continue" />
+                                </form>
+                            </div>
+                            <div v-if="createState === 1">
+                                <form @submit.prevent="createGamePart2">
+                                    <div v-for="i in parseInt(gameData.topicCount)" class="topic-form">
+                                        <input type ="text" placeholder="Enter Topic" v-model:value="gameData.words[parseInt(i) - 1]" />
+                                    </div>
+                                    <div v-for="i in parseInt(gameData.subtopicCount)" class="topic-form">
+                                        <input type ="text" placeholder="Enter Subtopic" v-model:value="gameData.words[(parseInt(i) - 1 + parseInt(gameData.topicCount))]" />
+                                    </div>
+                                    <input type="submit" value = "Create Game" />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--------------GHOST SCREEN----------------->
+            <div v-if ="state === 2">
+                <div class="container">
+                    <div class="row screen-view">
+                        <div v-for="(user, index) in users" class="playerRow">
+                            <h4 v-if="user.id === player.id">
+                                {{user.name}} (you)
+                            </h4>
+                            <h4 v-else>{{user.name}}</h4>
+                            <h4 v-if="player.isKicked && user.isGhost">(Ghost)</h4>
+                            <div v-if="player.isGhost">
+                                <h4 v-if="!player.isKicked && user.isGhost">(Ghost)</h4>
+                                <div v-if="!hasVoted && !player.isKicked">
+                                    <button v-on:click="voteForStart(index)">Vote for this player to start</button>
+                                </div>
+                                <div v-if="user.votes > 0">
+                                    <div v-if="hasVoted && !player.isKicked">
+                                        <button v-on:click="unvoteForStart(index)">Unvote this player</button>
+                                    </div>
+                                    <h6>{{user.votes}} / {{ghostsRemaining}}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row controller-view">
+                        <div v-if="player.isGhost">
+                            <div v-if="!player.isKicked">
+                                <h3>You are a GHOST. Choose someone to start with</h3>
+                            </div>
+                            <div v-else>
+                                <h3>You are a GHOST. But you cannot help your team vote while kicked.</h3>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <div v-if="player.isKicked">
+                                <h3>You have been kicked from the game.</h3>
+                                <h4>Your Word : {{player.word}}</h4>
+                            </div>
+                            <div v-else>
+                                <h3>Waiting for Ghosts to choose starter</h3>
+                                <h4>Your Word : {{player.word}}</h4>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--------------CLUE SCREEN----------------->
+            <div v-if ="state === 3">
+                <div class="container">
+                    <div class="row screen-view">
+                        <div v-for="(user, index) in users" class="playerRow">
+                            <h4 v-if="user.id === player.id">
+                                {{user.name}} (you)
+                            </h4>
+                            <h4 v-else>{{user.name}}</h4>
+                            <h4 v-if="player.isKicked && user.isGhost">(Ghost)</h4>
+                            <h4 v-if="!player.isKicked && player.isGhost && user.isGhost">(Ghost)</h4>
+                            <div v-if="!hasVoted && !player.isKicked">
+                                <button v-on:click="voteForKick(index)">Vote to kick this player!</button>
+                            </div>
+                            <div v-if="user.votes > 0">
+                                <div v-if="hasVoted && !player.isKicked">
+                                    <button v-on:click="unvoteForKick(index)">Unvote this player</button>
+                                </div>
+                                <h6>{{user.votes}} / {{neededVotes}}</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row controller-view">
+                        <h4>{{users[startingPlayer].name}}: You were chosen to start!</h4>
+                        <h5>*You need {{neededVotes}} to kick someone out*</h5>
+                        <h4>Your Word : {{player.word}}</h4>
+                    </div>
+                </div>
+            </div>
+            <!--------------RESULT SCREEN----------------->
+            <div v-if ="state === 4">
+                <div class="container">
+                    <div class="row screen-view">
+                        <div v-if="playersWin">
+                            <h4>You have kicked the last ghost <b>{{kickedPlayerName}}</b></h4>
+                            <h5>Humans win!</b></h5>
+                        </div>
+                        <div v-if="ghostsWin">
+                            <h4>You have kicked a human <b>{{kickedPlayerName}}</b> and the ghosts now outnumber you.</h4>
+                            <h5>Ghosts win!</b></h5>
+                        </div>
+                        <div v-if="!ghostsWin && !playersWin">
+                            <h4>You have decided to kick <b>{{kickedPlayerName}}.</b></h4>
+                            <h5>But there are still ghosts left... and the game continues on...</h5>
+                        </div>
+                    </div>
+                    <div class="row controller-view">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+
+        <!-----------------VUE JS SCRIPT----------------- -->
+        <script>
+            let socket = null;
+            var app = new Vue({
+            el: '#app',
+            data: {
+                roomName: '',
+                usersInLobby: [],
+                users: [],
+                username: '',
+                player: {},
+
+                state: 5,
+                createState: 0,
+
+                gameCreator: false,
+                gameData: {},
+
+                hasVoted: false,
+                startingPlayer: 0,
+
+                ghostsRemaining: 0,
+                playersLeft: 0,
+                neededVotes: 0,
+
+                ghostsWin: false,
+                playersWin: false,
+                kickedPlayerName: '',
+                ghostsList: []
+            },
+            created: function () {
+                // Current server that we are connecting to
+                socket = io("http://localhost:3000");
+            },
+            mounted: function () {
+                // socket functions for listening to server updates
+
+                socket.on('createRoom', function (room) {
+                    console.log('Created room: ' + room);
+                    this.roomName = room;
+                    app.state = 6
+                })
+                socket.on('joinRoom', function (obj) {
+                    console.log('Joined room: ' + obj.room);
+                    if (obj.id === socket.id) {
+                        this.roomName = obj.room
+                        app.state = 0;
+                    }
+                })
+
+                socket.on('join', function (user) {
+                    console.log('pushing to users')
+                    app.users.push(user);
+                    app.usersInLobby.push(user);
+                    console.log(app.usersInLobby);
+                })
+                socket.on('playerJoin', function (user) {
+                    // Gets the indv player array set up
+                    console.log('Getting individual data for player');
+                    app.player = user;
+                })
+                socket.on('start', function (startObj) {
+                    // starts the game and changes state for everyone
+                    console.log('Starting Game');
+                    app.state = 2;
+                    app.ghostsRemaining = parseInt(startObj.ghostCount);
+                    app.playersLeft = parseInt(startObj.playersLeft);
+                    app.neededVotes = app.playersLeft + app.ghostsRemaining
+                    app.neededVotes /= 2
+                    app.neededVotes = Math.floor(app.neededVotes)
+                    app.neededVotes += 1
+
+                })
+                socket.on('startingPlayer', function (index) {
+                    // starts the game and changes state for everyone
+                    console.log('Starting player is index ' + index);
+                    app.startingPlayer = parseInt(index)
+                    app.state = 3;
+                    for (let i = 0; i < app.users.length; ++i) {
+                        app.users[i].votes = 0;
+                    }
+                    app.hasVoted = false;
+                })
+                socket.on('startVote', function (voteObj) {
+                    // updates the voting for ghosts
+                    console.log("updating votes for everyone")
+                    app.users[parseInt(voteObj.index)].votes = parseInt(voteObj.votes)
+                })
+                socket.on('startKick', function (voteObj) {
+                    // updates the voting for kicking
+                    console.log("updating votes for everyone to kick")
+                    app.users[parseInt(voteObj.index)].votes = parseInt(voteObj.votes)
+                })
+                socket.on('result', function (index) {
+                    // Goes to result screen after player is kicked
+                    console.log('Gathering results from kicked player: ' + index);
+                    app.state = 4;
+                    for (let i = 0; i < app.users.length; ++i) {
+                        app.users[i].votes = 0;
+                    }
+                    app.hasVoted = false;
+                    // Delete user from array
+                    if (app.users[index].isGhost) {
+                        app.ghostsRemaining -= 1;
+                    } else {
+                        app.playersLeft -= 1;
+                    }
+                    app.kickedPlayerName = app.users[index].name
+                    console.log("kicked " + app.kickedPlayerName + "at index: " + index);
+                    console.log(app.users);
+                    // Check to see if game is won 
+                    if (app.ghostsRemaining >= app.playersLeft) {
+                        app.ghostsWin = true;
+                    } else if (app.ghostsRemaining === 0) {
+                        app.playersWin = true;
+                    }
+
+                    // Reset variables
+                    app.neededVotes = app.playersLeft + app.ghostsRemaining
+                    app.neededVotes /= 2
+                    app.neededVotes = Math.floor(app.neededVotes)
+                    app.neededVotes += 1
+                    console.log(app.player)
+                    if (app.player.name === app.kickedPlayerName) {
+                        console.log("Tell player he has been kicked and stop action")
+                        app.player.isKicked = true;
+                    }
+                    app.users.splice(index, 1);
+                    setTimeout(function() {
+                        if (app.ghostsWin || app.playersWin) {
+                            console.log("Returning to main menu")
+                            app.gameData = {};
+                            app.users = app.usersInLobby.slice();
+                            app.ghostsList = [];
+                            app.createState = 0;
+                            app.startingPlayer = 0;
+                            app.gameCreator = false;
+                            app.playersLeft = 0;
+                            app.neededVotes = 0;
+                            app.hasVoted = false;
+                            app.ghostsWin = false;
+                            app.playersWin = false;
+                            app.kickedPlayerName = '';
+                            app.state = 1;
+                        } else {
+                            console.log("Starting next round...")
+                            app.state = 2
+                        }
+                    }, 5000);
+                })
+                socket.on('gameData', function (data) {
+                    // Gets all the game data to the users
+                    console.log('Gathering all of the gameData');
+                    app.gameData = data;
+                    let wordList = data.words;
+                    for (let i = 0; i < app.users.length; ++i) {
+                        // Add word to users array
+                        app.users[i].word = wordList[0];
+                        if (app.users[i].word === "ghost") {
+                            app.users[i].isGhost = true;
+                        }
+                        wordList.splice(0,1);
+                        // add to ghostsList
+                        if (app.users[i].isGhost) {
+                            app.ghostsList.push(app.users[i].name)
+                        }
+                    }
+                    for (let i = 0; i < app.users.length; ++i) {
+                        if (app.users[i].id == app.player.id) {
+                            app.player.word = app.users[i].word;
+                            app.player.isGhost = app.users[i].isGhost;
+                        }
+                    }
+                })
+            },
+            methods: {
+                createRoom() {
+                    this.roomName = Math.random().toString(36).substring(7);
+                    this.roomName = this.roomName.toUpperCase();
+                    socket.emit('createRoom', this.roomName);
+                },
+                joinRoom() {
+                    if (this.roomName === '') {
+                        alert('please enter valid room name')
+                    } else {
+                        this.roomName = this.roomName.toUpperCase();
+                        socket.emit('joinRoom', this.roomName);
+                    }
+                },
+                setUsername: function () {
+                    // Sets the username of the user and sends to server
+                    console.log("Setting username")
+                    if (this.username === '') {
+                        alert('Please type in a valid username.');
+                    } else {
+                        let obj = {
+                            'username': this.username,
+                            'roomName': this.roomName,
+                        }
+                        socket.emit('join', obj);
+
+                        this.username = '';
+                        this.state = 1;
+                    }
+                },
+                createGamePart1: function () {
+                    // Creates array for game words and changes state
+                    console.log("Creating Game data part 1");
+                    this.gameData.words = []
+                    this.createState = 1
+                },
+                createGamePart2: function () {
+                    // Gets all of the words in an array and sends to server
+                    console.log("Creating Game data part 2");
+                    this.gameData.playerCount = parseInt(this.gameData.topicCount) + parseInt(this.gameData.subtopicCount);
+                    if (this.gameData.words.length !== this.gameData.playerCount) {
+                        alert("Please fill out all the boxes first")
+                    }
+                    else {
+                        for (let i = 0; i < parseInt(this.gameData.ghostCount); ++i) {
+                            this.gameData.words.push('ghost');
+                        }
+                        this.gameData.playerCount += parseInt(this.gameData.ghostCount)
+                        this.createState = 2;
+                        this.gameCreator = false;
+                        gameData.roomName = this.roomName
+                        socket.emit('gameData', this.gameData);
+                        alert("Success! Game was sent to server!");
+                    }
+                },
+                startGame: function () {
+                    // starts the game and sends to server
+                    console.log('Starting game startgame function')
+                    this.state = 2
+                    let startObj = {
+                        'ghostCount': this.gameData.ghostCount,
+                        'playersLeft': (this.gameData.playerCount - this.gameData.ghostCount),
+                        'roomName': this.roomName
+                    }
+                    socket.emit('start', startObj);
+                },
+                voteForStart(index) {
+                    // Ghosts vote for who should go first
+                    console.log("vote for " + index)
+                    if (!this.hasVoted) {
+                        this.users[index].votes += 1;
+                        this.hasVoted = true;
+                        let voteObj = {
+                            'index': index,
+                            'votes': this.users[index].votes,
+                            'roomName': this.roomName
+                        }
+                        socket.emit('startVote', voteObj)
+                    }
+                    if (this.users[index].votes >= this.ghostsRemaining) {
+                        console.log("Finalized a starting player")
+                        let obj = {
+                            'index': index,
+                            'roomName': this.roomName
+                        }
+                        setTimeout(function() {
+                            socket.emit('startingPlayer', obj);
+                        }, 1000);
+                    }
+                },
+                unvoteForStart(index) {
+                    // Ghosts unvote for who should go first
+                    console.log("unvote for " + index)
+                    if (this.hasVoted) {
+                        this.users[index].votes -= 1;
+                        this.hasVoted = false;
+                        let voteObj = {
+                            'index': index,
+                            'votes': this.users[index].votes,
+                            'roomName': this.roomName
+                        }
+                        socket.emit('startVote', voteObj)
+                    }
+                },
+                voteForKick(index) {
+                    // Players voting for player to kick
+                    console.log("vote to kick " + index)
+                    if (!this.hasVoted) {
+                        this.users[index].votes += 1;
+                        this.hasVoted = true;
+                        let voteObj = {
+                            'index': index,
+                            'votes': this.users[index].votes,
+                            'roomName': this.roomName
+                        }
+                        socket.emit('startKick', voteObj)
+                    }
+                    if (this.users[index].votes >= this.neededVotes) {
+                        console.log("Finalized a kicked player")
+                        let obj = {
+                            'index': index,
+                            'roomName': this.roomName
+                        }
+                        setTimeout(function() {
+                            socket.emit('result', obj);
+                        }, 1000);
+                    }
+                },
+                unvoteForKick(index) {
+                    console.log("unvote for " + index)
+                    if (this.hasVoted) {
+                        this.users[index].votes -= 1;
+                        this.hasVoted = false;
+                        let voteObj = {
+                            'index': index,
+                            'votes': this.users[index].votes,
+                            'roomName': this.roomName
+                        }
+                        socket.emit('startKick', voteObj)
+                    }
+                }
+            }
+        });
+        </script>
+    </body>
+</html>

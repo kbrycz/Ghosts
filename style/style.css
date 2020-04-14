@@ -1,0 +1,64 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #ffffff;
+    background-color: #2d3436;
+  }
+
+.screen-view {
+    margin-top: 15px;
+    background-color: #5b6a6e;
+    height: 600px;
+    border-left: 4px solid rgb(0, 0, 0);
+    border-right: 4px solid rgb(0, 0, 0);
+    border-top: 4px solid rgb(0, 0, 0);
+}
+.controller-view {
+    background-color: #444f52;
+    height: 200px;
+    border: 4px solid rgb(0, 0, 0);
+}
+
+/* -------------------LOGIN SCREEN------------------ */
+
+.login-view {
+    margin-top: 30px;
+    width: auto;
+}
+.login-view h2 {
+    margin-bottom: 150px;
+    font-size: 60px;
+}
+.login-view h3 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.login-view form {
+    text-align: center;
+}
+
+/* -------------------MENU SCREEN------------------ */
+.playerRow {
+    width: 100%;
+    border-bottom: 1px solid #2c3335;
+    padding: 10px;
+}
+
+.createButton {
+    margin: auto;
+}
+.createButton h4 {
+    margin-top: 30px;
+    text-align: center;
+    color: #008b17;
+}
+.input-numbers {
+    margin: auto;
+}
+
+.topic-form {
+    display: inline-block;
+    margin: 5px;
+    border: 1px solid #2c3335;
+}
