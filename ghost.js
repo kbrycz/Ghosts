@@ -23,11 +23,17 @@ io.on('connection', (socket) => {
                 rooms.splice(index, 1);
             }
             delete hosts[socket.id];
+        } else {
+            io.emit('leaveRoom', socket.id);
         }
     })
     socket.on('everyoneLeave', (room) => {
         console.log("exiting room");
         socket.leave(room);
+    })
+    socket.on('return', (room) => {
+        console.log("Returning to menu");
+        io.in(room).emit('return');
     })
 
     // STAGES 5-7
@@ -67,9 +73,9 @@ io.on('connection', (socket) => {
     socket.on('leaveRoom', (obj) => {
         socket.leave(obj.room);
         if (obj.isHost) {
-            io.in(obj.room).emit('hostLeft', obj);
+            io.in(obj.room).emit('hostLeft', obj.socketid);
         } else {
-            io.in(obj.room).emit('leaveRoom', obj);
+            io.in(obj.room).emit('leaveRoom', obj.socketid);
         }
     })
     // STAGE 0

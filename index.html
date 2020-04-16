@@ -39,7 +39,7 @@
                 <div class="container full">
                     <div class="row screen-view">
                         <div class="backButton">
-                            <button class="btn btn-light" v-on:click="this.state=5;socket.emit('everyoneLeave', roomName);">Back</button>
+                            <button class="btn btn-light" v-on:click="backButtonHost">Back</button>
                         </div>
                         <div class="container">
                             <h1>Ghosts Online</h1>
@@ -128,7 +128,7 @@
                 <div class="container full">
                     <div class="row screen-view">
                         <div class="backButton" v-if="gameCreator === true">
-                            <button class="btn btn-light" v-on:click="gameCreator = false">Back</button>
+                            <button class="btn btn-light" v-on:click="backButtonGameCreator">Back</button>
                         </div>
                         <div class="playerRowStart row" v-if="gameCreator === false">
                             <div class="playerRow" v-for="user in users">
@@ -352,21 +352,21 @@
                             <h4>One of the ghosts has guessed correctly!</h4>
                             <h4>The Ghosts Win!</h4>
                             <div>
-                                <button class="btn btn-light" v-on:click="state = 1">Return to lobby</button>
+                                <button class="btn btn-light" v-on:click="returnToLobby">Return to lobby</button>
                             </div>
                         </div>
                         <div v-if="playersWin && ghostsGuessed === 2" class="resultContent">
                             <h4>All of the ghosts have guessed incorrectly.</h4>
                             <h4>The Players Win!</h4>
                             <div>
-                                <button class="btn btn-light" v-on:click="state = 1">Return to lobby</button>
+                                <button class="btn btn-light" v-on:click="returnToLobby">Return to lobby</button>
                             </div>
                         </div>
                         <div class="resultContent" v-if="ghostsWin">
                             <h4>You have kicked a human <b>{{kickedPlayerName}}</b> and the ghosts now outnumber you.</h4>
                             <h4>Ghosts win!</h4>
                             <div>
-                                <button class="btn btn-light" v-on:click="state = 1">Return to lobby</button>
+                                <button class="btn btn-light" v-on:click="returnToLobby">Return to lobby</button>
                             </div>
                         </div>
                         <div class="resultContent" v-if="!ghostsWin && !playersWin">
@@ -430,7 +430,7 @@
             },
             created: function () {
                 // Current server that we are connecting to
-                socket = io("http://localhost:3000");
+                socket = io("http://:3000");
                 if (window.location.search !== '') {
                     let room = window.location.search.toString();
                     room = room.toUpperCase();
@@ -460,6 +460,10 @@
                         app.state = 0;
                     }
                 })
+                socket.on('return', function () {
+                    app.users = app.usersInLobby;
+                    app.state = 1;
+                })
                 socket.on('hostDisconnected', function () {
                     alert("Host has disconnected. Returning to main menu.")
                     app.state = 5;
@@ -476,12 +480,11 @@
                         app.ghostsGuessed = 2;
                     }
                 })
-                socket.on('leaveRoom', function (obj) {
+                socket.on('leaveRoom', function (id) {
                     console.log("User has left the room");
                     let indexToLeave = -1;
-                    let id = obj.socketid;
                     for (let i = 0; i < app.users.length; ++i) {
-                        if (app.users[i].socketid == id) {
+                        if (app.users[i].socketid === id) {
                             indexToLeave = i;
                         }
                     }
@@ -614,7 +617,7 @@
                         wordList.splice(0,1);
                     }
                     for (let i = 0; i < app.users.length; ++i) {
-                        if (app.users[i].id == app.player.id) {
+                        if (app.users[i].id === app.player.id) {
                             app.player.word = app.users[i].word;
                             app.player.isGhost = app.users[i].isGhost;
                         }
@@ -803,8 +806,8 @@
                     socket.emit('leaveRoom', obj);
                 },
                 guessTopic() {
-                    this.player.hasGuessed = true;
                     console.log(this.player.guess)
+                    this.player.hasGuessed = true;
                     if (this.player.guess === app.gameData.topic) {
                         app.ghostsGuessed = 1;
                     }
@@ -813,6 +816,22 @@
                         'room': this.roomName,
                     }
                     socket.emit('ghostGuessed', obj);
+                },
+                returnToLobby() {
+                    console.log("player is returning to lobby");
+                    socket.emit('return', this.roomName);
+                },
+                backButtonHost() {
+                    console.log('host destroying made game.')
+                    this.state = 5;
+                    socket.emit('everyoneLeave', this.roomName);
+                },
+                backButtonGameCreator() {
+                    if (this.createState > 0) {
+                        this.createState -=1;
+                    }else {
+                        this.gameCreator = false; 
+                    }
                 }
             }
         });
