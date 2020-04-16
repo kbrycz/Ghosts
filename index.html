@@ -12,6 +12,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="description" content="Online multiplayer version of the party game Ghosts.">
+        <link rel="shortcut icon" type="image/png" href="images/favicon.png">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="style/style.css">
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
@@ -34,6 +35,9 @@
                                 </div>
                                 <div class="buttonBlock">
                                     <button class="btn btn-light homeButton" v-on:click="state = 7">Join Room</button>
+                                </div>
+                                <div class="buttonBlock">
+                                    <img class="ghostImage" src="images/ghost.png">
                                 </div>
                             </div>
                         </div>
@@ -64,6 +68,9 @@
                                 </div>
                                 <div class="buttonBlock">
                                     <button v-on:click="state = 0">Continue</button>
+                                </div>
+                                <div class="buttonBlock">
+                                    <img class="ghostImage" src="images/ghost.png">
                                 </div>
                             </div>
                         </div>
@@ -96,6 +103,9 @@
                                         <input class="btn btn-light" type="submit" value = "Join" />
                                     </form>
                                 </div>
+                                <div class="buttonBlock">
+                                    <img class="ghostImage" src="images/ghost.png">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -112,6 +122,9 @@
             <div v-if="state === 0">
                 <div class="container full">
                     <div class="row screen-view">
+                        <div class="backButton">
+                            <button class="btn btn-light" v-on:click="backButtonUser">Back</button>
+                        </div>
                         <div class="container">
                             <h1>Ghosts Online</h1>
                             <div class="login-view">
@@ -123,6 +136,9 @@
                                         <input class="joinText" type ="text" placeholder="Username..." v-model:value="username" />
                                         <input class="btn btn-light" type="submit" value = "join" />
                                     </form>
+                                </div>
+                                <div class="buttonBlock">
+                                    <img class="ghostImage" src="images/ghost.png">
                                 </div>
                             </div>
                         </div>

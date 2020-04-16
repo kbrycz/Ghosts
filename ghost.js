@@ -4,6 +4,7 @@ const http = require('http').Server(app)
 const io = require('socket.io')(http)
 
 app.use('/style', express.static(__dirname + '/style'))
+app.use('/images', express.static(__dirname + '/images'))
 app.use('/js', express.static(__dirname + '/js'))
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'))
 
@@ -31,6 +32,15 @@ io.on('connection', (socket) => {
     socket.on('everyoneLeave', (room) => {
         console.log("exiting room");
         socket.leave(room);
+        if (socket.id in hosts) {
+            console.log('host has disconnected');
+            io.in(hosts[socket.id]).emit('hostDisconnected');
+            var index = rooms.indexOf(hosts[socket.id]);
+            if (index !== -1) {
+                rooms.splice(index, 1);
+            }
+            delete hosts[socket.id];
+        }
     })
     socket.on('return', (room) => {
         console.log("Returning to menu");
@@ -65,6 +75,7 @@ io.on('connection', (socket) => {
             io.in(roomName).emit('joinRoom', obj);
         } else {
             console.log('Error: No room with this name')
+            socket.emit('noRoom', roomName);
         }
     }) 
 

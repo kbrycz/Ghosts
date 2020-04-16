@@ -64,6 +64,10 @@ mounted: function () {
             app.state = 0;
         }
     })
+    socket.on('noRoom', function (name) {
+        console.log('hi')
+        alert('No room with key: ' + name);
+    })
     socket.on('return', function () {
         app.users = app.usersInLobby;
         app.state = 1;
@@ -429,6 +433,11 @@ methods: {
         console.log('host destroying made game.')
         this.state = 5;
         socket.emit('everyoneLeave', this.roomName);
+    },
+    backButtonUser() {
+        console.log('user leaving joined game.')
+        this.state = 5;
+        socket.emit('leaveRoom', this.roomName);
     },
     backButtonGameCreator() {
         if (this.createState > 0) {

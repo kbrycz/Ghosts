@@ -1,7 +1,7 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: Creepster, Helvetica, sans-serif;
+    font-family: Creepster, Montserrat, Helvetica, sans-serif;
     color: #f4f0f8;
     background-color: #f4f0f8;
     letter-spacing: 6px;
@@ -30,6 +30,11 @@ body {
     height: 20%;
     border-top: 4px solid #9e7bc3;
     position: relative;
+}
+
+.ghostImage {
+    width: 140px;
+    margin-top: 40px;
 }
 
 /* -------------------LOGIN SCREEN------------------ */
@@ -64,7 +69,7 @@ h1 {
     font-size: 15px;
     bottom: 8px;
     right: 16px;
-    font-family: Helvetica;
+    font-family: Montserrat, Helvetica;
 }
 .roomkey {
     position: absolute;
@@ -72,7 +77,7 @@ h1 {
     font-size: 15px;
     top: 8px;
     right: 16px;
-    font-family: Helvetica;
+    font-family: Montserrat, Helvetica;
 }
 .leave {
     position: absolute;
@@ -91,7 +96,7 @@ h1 {
 
 .login-view h5 {
     font-size: 14px;
-    font-family: Helvetica, sans-serif;
+    font-family: Montserrat, Helvetica, sans-serif;
     margin-top: 30px;
     margin-bottom: 30px;
 }
@@ -101,7 +106,7 @@ h1 {
 .createScreen h4 {
     margin-top: 30px;
     margin-bottom: 30px;
-    font-family: Helvetica;
+    font-family: Montserrat, Helvetica;
     letter-spacing: 7px;
 }
 
@@ -145,7 +150,7 @@ h1 {
     position: relative;
 }
 .inputNumbers {
-    font-family: Helvetica;
+    font-family: Montserrat, Helvetica;
     margin: auto;
     text-align: right;
 }
