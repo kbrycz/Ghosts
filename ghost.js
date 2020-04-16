@@ -4,6 +4,7 @@ const http = require('http').Server(app)
 const io = require('socket.io')(http)
 
 app.use('/style', express.static(__dirname + '/style'))
+app.use('/js', express.static(__dirname + '/js'))
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'))
 
 let idNumber = 0
@@ -138,4 +139,4 @@ io.on('connection', (socket) => {
     })
 })
 
-http.listen(3000, () => console.log('listening on port 3000'))
+http.listen(80, () => console.log('listening on port 3000'))
