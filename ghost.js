@@ -14,7 +14,7 @@ let rooms = []
 let hosts = {}
 io.on('connection', (socket) => {
     console.log("someone has connected")
-    console.log.log(socket.id)
+    console.log(socket.id)
 
     socket.on('disconnect', () => {
         console.log('User has disconnected');
