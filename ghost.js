@@ -14,9 +14,11 @@ let rooms = []
 let hosts = {}
 io.on('connection', (socket) => {
     console.log("someone has connected")
+    console.log.log(socket.id)
 
     socket.on('disconnect', () => {
         console.log('User has disconnected');
+        console.log.log(socket.id)
         if (socket.id in hosts) {
             console.log('host has disconnected');
             io.in(hosts[socket.id]).emit('hostDisconnected');
