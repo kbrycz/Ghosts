@@ -34,7 +34,7 @@ data: {
 },
 created: function () {
     // Current server that we are connecting to
-    socket = io("http://:3000");
+    socket = io();
     if (window.location.search !== '') {
         let room = window.location.search.toString();
         room = room.toUpperCase();

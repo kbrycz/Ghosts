@@ -139,4 +139,4 @@ io.on('connection', (socket) => {
     })
 })
 
-http.listen(80, () => console.log('listening on port 3000'))
+http.listen(80, () => console.log('listening on port 80'))
