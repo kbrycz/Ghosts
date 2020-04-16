@@ -5,112 +5,195 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="style/style.css">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+        <script src='http://use.edgefonts.net/creepster.js'></script>
         <title>Ghosts</title>
     </head>
     <body>
         <div id="app">
             <!--------------HOME SCREEN----------------->
-            <div v-if="state === 5">
-                <div class="container">
+            <div v-if="state === 5" class="home">
+                <div class="container full">
                     <div class="row screen-view">
-                        <div class="container login-view">
-                            <h2>Welcome to Ghosts Online</h2>
-                            <button v-on:click="createRoom">Create Room</button>
-                            <button v-on:click="state = 7">Join Room</button>
+                        <div class="container">
+                            <h1>Ghosts Online</h1>
+                            <div class="login-view">
+                                <div class="buttonBlock">
+                                    <button class="btn btn-light homeButton" v-on:click="createRoom">Create Room</button>
+                                </div>
+                                <div class="buttonBlock">
+                                    <button class="btn btn-light homeButton" v-on:click="state = 7">Join Room</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row controller-view">
+                        <div class="version">
+                            <p>Version 1.0.0</p>
+                        </div>
                     </div>
                 </div>
             </div>
             <!--------------CREATE ROOM SCREEN----------------->
-            <div v-if="state === 6">
-                <div class="container">
+            <div v-if="state === 6" class="createScreen">
+                <div class="container full">
                     <div class="row screen-view">
-                        <div class="container login-view">
-                            <h2>Welcome to Ghosts Online</h2>
-                            <h3>Here is your invite code: </h3>
-                            <h4>{{roomName}}</h4>
-                            <button v-on:click="state = 0">Continue</button>
+                        <div class="backButton">
+                            <button class="btn btn-light" v-on:click="this.state=5;socket.emit('everyoneLeave', roomName);">Back</button>
+                        </div>
+                        <div class="container">
+                            <h1>Ghosts Online</h1>
+                            <div class="login-view">
+                                <div class="buttonBlock">
+                                    <h3>Here is your invite code:</h3>
+                                    <h4>{{roomName}}</h4>
+                                    <h5>Invite Link: http://localhost:3000/?{{roomName}}</h5>
+                                </div>
+                                <div class="buttonBlock">
+                                    <button v-on:click="state = 0">Continue</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row controller-view">
+                        <div class="version">
+                            <p>Version 1.0.0</p>
+                        </div>
                     </div>
                 </div>
             </div>
             <!--------------JOIN ROOM SCREEN----------------->
             <div v-if="state === 7">
-                <div class="container">
+                <div class="container full">
                     <div class="row screen-view">
-                        <div class="container login-view">
-                            <h2>Welcome to Ghosts Online</h2>
-                            <h3>Enter a room name to join</h3>
-                            <form @submit.prevent="joinRoom">
-                                <input type ="text" onkeyup="this.value = this.value.toUpperCase();" placeholder="Room name..." v-model:value="roomName" />
-                                <input type="submit" value = "Join" />
-                            </form>
+                        <div class="backButton">
+                            <button class="btn btn-light" v-on:click="state = 5">Back</button>
+                        </div>
+                        <div class="container">
+                            <h1>Ghosts Online</h1>
+                            <div class="login-view">
+                                <div class="buttonBlock">
+                                    <h3>Enter a room key to join:</h3>
+                                </div>
+                                <div class="buttonBlock">
+                                    <form @submit.prevent="joinRoom" class="joinDiv">
+                                        <input class="joinText" type ="text" onkeyup="this.value = this.value.toUpperCase();" placeholder="Room key..." v-model:value="roomName" />
+                                        <input class="btn btn-light" type="submit" value = "Join" />
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row controller-view">
+                        <div class="version">
+                            <p>Version 1.0.0</p>
+                        </div>
                     </div>
                 </div>
             </div>
             <!--------------USERNAME SCREEN----------------->
             <div v-if="state === 0">
-                <div class="container">
+                <div class="container full">
                     <div class="row screen-view">
-                        <div class="container login-view">
-                            <h2>Welcome to Ghosts Online</h2>
-                            <h3>Please Enter a Username</h3>
-                            <form @submit.prevent="setUsername">
-                                <input type ="text" placeholder="Username..." v-model:value="username" />
-                                <input type="submit" value = "join" />
-                            </form>
+                        <div class="container">
+                            <h1>Ghosts Online</h1>
+                            <div class="login-view">
+                                <div class="buttonBlock">
+                                    <h3>Please Enter a Username:</h3>
+                                </div>
+                                <div class="buttonBlock">
+                                    <form @submit.prevent="setUsername" class="joinDiv">
+                                        <input class="joinText" type ="text" placeholder="Username..." v-model:value="username" />
+                                        <input class="btn btn-light" type="submit" value = "join" />
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row controller-view">
+                        <div class="version">
+                            <p>Version 1.0.0</p>
+                        </div>
+                        <div class="roomkey">
+                            <p>Key: {{roomName}}</p>
+                        </div>
+                        <div class="leave">
+                            <button class="btn btn-light" v-on:click="leaveRoom">Quit</button>
+                        </div>
                     </div>
                 </div>
             </div>
             <!--------------GAME SCREEN----------------->
             <div v-if ="state === 1">
-                <div class="container">
+                <div class="container full">
                     <div class="row screen-view">
-                        <div v-for="user in users" class="playerRow">
-                            <h4 v-if="user.id === player.id">
-                                {{user.name}} (you)
-                            </h4>
-                            <h4 v-else>{{user.name}}</h4>
+                        <div class="backButton" v-if="gameCreator === true">
+                            <button class="btn btn-light" v-on:click="gameCreator = false">Back</button>
+                        </div>
+                        <div class="playerRowStart row" v-if="gameCreator === false">
+                            <div class="playerRow" v-for="user in users">
+                                <div v-if="user.id === player.id">
+                                    <h4 v-if="isHost">{{user.name}} (You, Host)</h4>
+                                    <h4 v-else>{{user.name}} (You)</h4>
+                                </div>
+                                <div v-else>
+                                    <h4>{{user.name}}</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="inputNumbers" v-else>
+                            <div v-if="createState === 0">
+                                <form @submit.prevent="createGamePart1">
+                                    <div>
+                                        <label>Number of ghosts: </label>
+                                        <input type ="number" placeholder="ghosts..." v-model:value="gameData.ghostCount" />
+                                    </div>
+                                    <div>
+                                        <label>Number of topics: </label>
+                                        <input type ="number" placeholder="topics..." v-model:value="gameData.topicCount" />
+                                    </div>
+                                    <div>
+                                        <label>Number of subtopics: </label>
+                                        <input type ="number" placeholder="subtopics..." v-model:value="gameData.subtopicCount" />
+                                    </div>
+                                    <div>
+                                        <input class="btn btn-light createGameButton" type="submit" value = "Continue" />
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="longForm" v-if="createState === 1">
+                                <form @submit.prevent="createGamePart2">
+                                    <div v-for="i in parseInt(gameData.topicCount)" class="topic-form">
+                                        <label>Enter a topic</label>
+                                        <input type ="text" placeholder="topic..." v-model:value="gameData.words[parseInt(i) - 1]" />
+                                    </div>
+                                    <div v-for="i in parseInt(gameData.subtopicCount)" class="topic-form">
+                                        <label>Enter a subtopic</label>
+                                        <input type ="text" placeholder="subtopic" v-model:value="gameData.words[(parseInt(i) - 1 + parseInt(gameData.topicCount))]" />
+                                    </div>
+                                    <div>
+                                        <input class="btn btn-light createGameButton" type="submit" value = "Create Game" />
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <div class="row controller-view">
+                        <div class="version">
+                            <p>Version 1.0.0</p>
+                        </div>
+                        <div class="roomkey">
+                            <p>Key: {{roomName}}</p>
+                        </div>
+                        <div class="leave">
+                            <button class="btn btn-light" v-on:click="leaveRoom">Quit</button>
+                        </div>
                         <div class="createButton" v-if="gameCreator === false">
                             <div v-if="createState !== 2">
-                                <button v-on:click="gameCreator = true">Create a Game</button>
+                                <button class="btn btn-light soloButton" v-on:click="gameCreator = true">Create a Game</button>
                             </div>
                             <div v-else>
-                                <button v-on:click="startGame">Start Game</button>
-                            </div>
-                        </div>
-                        <div class="input-numbers" v-else>
-                            <div v-if="createState === 0">
-                                <form @submit.prevent="createGamePart1">
-                                    <input type ="number" placeholder="number of ghosts" v-model:value="gameData.ghostCount" />
-                                    <input type ="number" placeholder="number of topics" v-model:value="gameData.topicCount" />
-                                    <input type ="number" placeholder="number of subtopics" v-model:value="gameData.subtopicCount" />
-                                    <input type="submit" value = "Continue" />
-                                </form>
-                            </div>
-                            <div v-if="createState === 1">
-                                <form @submit.prevent="createGamePart2">
-                                    <div v-for="i in parseInt(gameData.topicCount)" class="topic-form">
-                                        <input type ="text" placeholder="Enter Topic" v-model:value="gameData.words[parseInt(i) - 1]" />
-                                    </div>
-                                    <div v-for="i in parseInt(gameData.subtopicCount)" class="topic-form">
-                                        <input type ="text" placeholder="Enter Subtopic" v-model:value="gameData.words[(parseInt(i) - 1 + parseInt(gameData.topicCount))]" />
-                                    </div>
-                                    <input type="submit" value = "Create Game" />
-                                </form>
+                                <button class="btn btn-light soloButton" v-on:click="startGame">Start Game</button>
                             </div>
                         </div>
                     </div>
@@ -118,47 +201,70 @@
             </div>
             <!--------------GHOST SCREEN----------------->
             <div v-if ="state === 2">
-                <div class="container">
+                <div class="container full">
                     <div class="row screen-view">
-                        <div v-for="(user, index) in users" class="playerRow">
-                            <h4 v-if="user.id === player.id">
-                                {{user.name}} (you)
-                            </h4>
-                            <h4 v-else>{{user.name}}</h4>
-                            <h4 v-if="player.isKicked && user.isGhost">(Ghost)</h4>
-                            <div v-if="player.isGhost">
-                                <h4 v-if="!player.isKicked && user.isGhost">(Ghost)</h4>
-                                <div v-if="!hasVoted && !player.isKicked">
-                                    <button v-on:click="voteForStart(index)">Vote for this player to start</button>
-                                </div>
-                                <div v-if="user.votes > 0">
-                                    <div v-if="hasVoted && !player.isKicked">
-                                        <button v-on:click="unvoteForStart(index)">Unvote this player</button>
+                        <div class="playerRowStart row">
+                            <div v-for="(user, index) in users" class="playerRow">
+                                <div class="col-4">
+                                    <div v-if="user.id === player.id">
+                                        <h4 class="firstName" v-if="isHost">{{user.name}} (You, Host)</h4>
+                                        <h4 class="firstName" v-else>{{user.name}} (You)</h4>
                                     </div>
-                                    <h6>{{user.votes}} / {{ghostsRemaining}}</h6>
+                                    <div v-else>
+                                        <h4 class="firstName">{{user.name}}</h4>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <h4 class="ghostName" v-if="player.isKicked && user.isGhost">(Ghost)</h4>
+                                    <h4 class="ghostName" v-if="player.isGhost && !player.isKicked && user.isGhost">(Ghost)</h4>
+                                </div>
+                                <div class="col">
+                                    <div v-if="player.isGhost" class="row">
+                                        <div class="col-8">
+                                            <div v-if="!hasVoted && !player.isKicked && !isGameMaker">
+                                                <button class="btn btn-light voteGhostButton" v-on:click="voteForStart(index)">Vote this player</button>
+                                            </div>
+                                            <div v-if="user.votes > 0 && hasVoted && !player.isKicked && player.votedIndex === index && !isGameMaker">
+                                                <button class="btn btn-light voteGhostButton" v-on:click="unvoteForStart(index)">Unvote this player</button>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <h6 v-if="user.votes > 0" class="voteCount">{{user.votes}} / {{ghostsRemaining}}</h6>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row controller-view">
-                        <div v-if="player.isGhost">
-                            <div v-if="!player.isKicked">
-                                <h3>You are a GHOST. Choose someone to start with</h3>
-                            </div>
-                            <div v-else>
-                                <h3>You are a GHOST. But you cannot help your team vote while kicked.</h3>
-                            </div>
+                        <div class="version">
+                            <p>Version 1.0.0</p>
                         </div>
-                        <div v-else>
-                            <div v-if="player.isKicked">
-                                <h3>You have been kicked from the game.</h3>
-                                <h4>Your Word : {{player.word}}</h4>
+                        <div class="roomkey">
+                            <p>Key: {{roomName}}</p>
+                        </div>
+                        <div class="leave">
+                            <button class="btn btn-light" v-on:click="leaveRoom">Quit</button>
+                        </div>
+                        <div class="container ghostChoosing">
+                            <div v-if="player.isGhost">
+                                <div v-if="!player.isKicked">
+                                    <h4>You are a GHOST. Choose someone to start with</h4>
+                                </div>
+                                <div v-else>
+                                    <h4>You are a GHOST. But you cannot help your team vote while kicked.</h4>
+                                </div>
                             </div>
                             <div v-else>
-                                <h3>Waiting for Ghosts to choose starter</h3>
-                                <h4>Your Word : {{player.word}}</h4>
+                                <div v-if="player.isKicked">
+                                    <h34>You have been kicked from the game.</h4>
+                                    <h4>Your Word : {{player.word}}</h4>
+                                </div>
+                                <div v-else>
+                                    <h4>Waiting for Ghosts to choose starter</h4>
+                                    <h4>Your Word : <b>{{player.word}}</b></h4>
+                                </div>
                             </div>
-                            
                         </div>
                     </div>
                 </div>
@@ -166,51 +272,119 @@
 
             <!--------------CLUE SCREEN----------------->
             <div v-if ="state === 3">
-                <div class="container">
+                <div class="container full">
                     <div class="row screen-view">
-                        <div v-for="(user, index) in users" class="playerRow">
-                            <h4 v-if="user.id === player.id">
-                                {{user.name}} (you)
-                            </h4>
-                            <h4 v-else>{{user.name}}</h4>
-                            <h4 v-if="player.isKicked && user.isGhost">(Ghost)</h4>
-                            <h4 v-if="!player.isKicked && player.isGhost && user.isGhost">(Ghost)</h4>
-                            <div v-if="!hasVoted && !player.isKicked">
-                                <button v-on:click="voteForKick(index)">Vote to kick this player!</button>
-                            </div>
-                            <div v-if="user.votes > 0">
-                                <div v-if="hasVoted && !player.isKicked">
-                                    <button v-on:click="unvoteForKick(index)">Unvote this player</button>
+                        <div class="playerRowStart row">
+                            <div v-for="(user, index) in users" class="playerRow">
+                                <div class="col-4">
+                                    <div v-if="user.id === player.id">
+                                        <h4 class="firstName" v-if="isHost">{{user.name}} (You, Host)</h4>
+                                        <h4 class="firstName" v-else>{{user.name}} (You)</h4>
+                                    </div>
+                                    <div v-else>
+                                        <h4 class="firstName">{{user.name}}</h4>
+                                    </div>
                                 </div>
-                                <h6>{{user.votes}} / {{neededVotes}}</h6>
+                                <div class="col-3">
+                                    <h4 class="ghostName" v-if="player.isKicked && user.isGhost">(Ghost)</h4>
+                                    <h4 class="ghostName" v-if="player.isGhost && !player.isKicked && user.isGhost">(Ghost)</h4>
+                                </div>
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <div v-if="!hasVoted && !player.isKicked && !isGameMaker">
+                                                <button class="btn btn-light voteGhostButton" v-on:click="voteForKick(index)">Vote to kick this player!</button>
+                                            </div>
+                                            <div v-if="user.votes > 0 && hasVoted && !player.isKicked && player.votedIndex === index && !isGameMaker">
+                                                <button class="btn btn-light voteGhostButton" v-on:click="unvoteForKick(index)">Unvote this player</button>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <h6 v-if="user.votes > 0" class="voteCount">{{user.votes}} / {{neededVotes}}</h6>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="row controller-view">
-                        <h4>{{users[startingPlayer].name}}: You were chosen to start!</h4>
-                        <h5>*You need {{neededVotes}} to kick someone out*</h5>
-                        <h4>Your Word : {{player.word}}</h4>
+                        <div class="version">
+                            <p>Version 1.0.0</p>
+                        </div>
+                        <div class="roomkey">
+                            <p>Key: {{roomName}}</p>
+                        </div>
+                        <div class="leave">
+                            <button class="btn btn-light" v-on:click="leaveRoom">Quit</button>
+                        </div>
+                        <div class="container playerChoosing">
+                                <h4>{{users[startingPlayer].name}}: You were chosen to start!</h4>
+                                <h4>*You need {{neededVotes}} to kick someone out*</h4>
+                                <h4>Your Word : {{player.word}}</h4>
+                        </div>
                     </div>
                 </div>
             </div>
             <!--------------RESULT SCREEN----------------->
             <div v-if ="state === 4">
-                <div class="container">
+                <div class="container full">
                     <div class="row screen-view">
-                        <div v-if="playersWin">
+                        <div class="resultContent" v-if="playersWin && ghostsGuessed === 0">
                             <h4>You have kicked the last ghost <b>{{kickedPlayerName}}</b></h4>
-                            <h5>Humans win!</b></h5>
+                            <h4>But the ghosts get a chance to guess...</h4>
+                            <div v-if="!player.hasGuessed && player.isGhost && !isGameMaker" class="ghostGuess">
+                                <form @submit.prevent="guessTopic">
+                                    <div>
+                                        <label>Enter guess here:</label>
+                                        <input type ="text" placeholder="topic..." v-model:value="player.guess" />
+                                    </div>
+                                    <div>
+                                        <input class="btn btn-light guessButton" type="submit" value = "Guess" />
+                                    </div>
+                                </form>
+                            </div>
+                            <div v-if="player.isGhost && player.hasGuessed && !isGameMaker">
+                                <h4>You have guessed wrong...</h4>
+                                <h4>Waiting for other ghosts to submit...</h4>
+                            </div>
                         </div>
-                        <div v-if="ghostsWin">
+                        <div v-if="playersWin && ghostsGuessed === 1" class="resultContent">
+                            <h4>One of the ghosts has guessed correctly!</h4>
+                            <h4>The Ghosts Win!</h4>
+                            <div>
+                                <button class="btn btn-light" v-on:click="state = 1">Return to lobby</button>
+                            </div>
+                        </div>
+                        <div v-if="playersWin && ghostsGuessed === 2" class="resultContent">
+                            <h4>All of the ghosts have guessed incorrectly.</h4>
+                            <h4>The Players Win!</h4>
+                            <div>
+                                <button class="btn btn-light" v-on:click="state = 1">Return to lobby</button>
+                            </div>
+                        </div>
+                        <div class="resultContent" v-if="ghostsWin">
                             <h4>You have kicked a human <b>{{kickedPlayerName}}</b> and the ghosts now outnumber you.</h4>
-                            <h5>Ghosts win!</b></h5>
+                            <h4>Ghosts win!</h4>
+                            <div>
+                                <button class="btn btn-light" v-on:click="state = 1">Return to lobby</button>
+                            </div>
                         </div>
-                        <div v-if="!ghostsWin && !playersWin">
+                        <div class="resultContent" v-if="!ghostsWin && !playersWin">
                             <h4>You have decided to kick <b>{{kickedPlayerName}}.</b></h4>
-                            <h5>But there are still ghosts left... and the game continues on...</h5>
+                            <h4>But there are still ghosts left...</h4>
+                            <h4>The game continues on...</h4>
                         </div>
                     </div>
                     <div class="row controller-view">
+                        <div class="version">
+                            <p>Version 1.0.0</p>
+                        </div>
+                        <div class="roomkey">
+                            <p>Key: {{roomName}}</p>
+                        </div>
+                        <div class="leave">
+                            <button class="btn btn-light" v-on:click="leaveRoom">Quit</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -224,18 +398,22 @@
             var app = new Vue({
             el: '#app',
             data: {
+                hostSocketId: 0,
                 isHost: false,
                 roomName: '',
                 usersInLobby: [],
                 users: [],
                 username: '',
                 player: {},
+                gameCreated: false,
 
                 state: 5,
                 createState: 0,
 
                 gameCreator: false,
                 gameData: {},
+                isGameMaker: false,
+                creatorData: {},
 
                 hasVoted: false,
                 startingPlayer: 0,
@@ -247,16 +425,27 @@
                 ghostsWin: false,
                 playersWin: false,
                 kickedPlayerName: '',
+                ghostsGuessed: 0,
+                totalGuessed: 0,
             },
             created: function () {
                 // Current server that we are connecting to
                 socket = io("http://localhost:3000");
+                if (window.location.search !== '') {
+                    let room = window.location.search.toString();
+                    room = room.toUpperCase();
+                    room = room.slice(1);
+                    console.log(room)
+                    socket.emit('joinRoom', room);
+                }
+                console.log(window.location);
             },
             mounted: function () {
                 // socket functions for listening to server updates
                 socket.on('createRoom', function (obj) {
                     console.log('Created room: ' + obj.room);
                     app.isHost = true;
+                    app.hostSocketId = socket.id;
                     app.roomName = obj.room;
                     app.state = 6
                 })
@@ -264,11 +453,47 @@
                     if (app.isHost) {
                         app.updateInformation();
                     }
+                    console.log(app.gameData);
                     if (obj.id === socket.id) {
                         console.log('Joined room: ' + obj.room);
                         app.roomName = obj.room
                         app.state = 0;
                     }
+                })
+                socket.on('hostDisconnected', function () {
+                    alert("Host has disconnected. Returning to main menu.")
+                    app.state = 5;
+                    socket.emit('everyoneLeave', app.roomName);
+                })
+                socket.on('ghostGuessed', function (guess) {
+                    console.log("A Ghost has guessed");
+                    console.log(guess)
+                    app.totalGuessed += 1;
+                    if (guess === app.gameData.topic) {
+                        app.ghostsGuessed = 1;
+                    }
+                    else if (app.totalGuessed >= app.gameData.ghostCount) {
+                        app.ghostsGuessed = 2;
+                    }
+                })
+                socket.on('leaveRoom', function (obj) {
+                    console.log("User has left the room");
+                    let indexToLeave = -1;
+                    let id = obj.socketid;
+                    for (let i = 0; i < app.users.length; ++i) {
+                        if (app.users[i].socketid == id) {
+                            indexToLeave = i;
+                        }
+                    }
+                    if (indexToLeave !== -1) {
+                        app.users.splice(indexToLeave, 1);
+                        app.updateInformation();
+                    }
+                })
+                socket.on('hostLeft', function (obj) {
+                    console.log("Host left. Returning to menu")
+                    alert("Host has left the game. Going to main menu.")
+                    app.state = 5;
                 })
                 socket.on('updateInformation', function (obj) {
                     app.roomName = obj.roomName;
@@ -284,6 +509,11 @@
                     app.users.push(user);
                     app.usersInLobby.push(user);
                     console.log(app.usersInLobby);
+                    if (app.isGameMaker) {
+                        app.creatorData.users = app.users;
+                        console.log("SENDING Creator DATA");
+                        socket.emit('gameData', app.creatorData);
+                    }
                 })
                 socket.on('playerJoin', function (user) {
                     // Gets the indv player array set up
@@ -340,7 +570,7 @@
                         app.playersLeft -= 1;
                     }
                     app.kickedPlayerName = app.users[index].name
-                    console.log("kicked " + app.kickedPlayerName + "at index: " + index);
+                    console.log("kicked " + app.kickedPlayerName + " at index: " + index);
                     console.log(app.users);
                     // Check to see if game is won 
                     if (app.ghostsRemaining >= app.playersLeft) {
@@ -348,7 +578,6 @@
                     } else if (app.ghostsRemaining === 0) {
                         app.playersWin = true;
                     }
-
                     // Reset variables
                     app.neededVotes = app.playersLeft + app.ghostsRemaining
                     app.neededVotes /= 2
@@ -360,44 +589,29 @@
                         app.player.isKicked = true;
                     }
                     app.users.splice(index, 1);
-                    setTimeout(function() {
-                        if (app.ghostsWin || app.playersWin) {
-                            console.log("Returning to main menu")
-                            app.gameData = {};
-                            app.users = app.usersInLobby.slice();
-                            app.ghostsList = [];
-                            app.createState = 0;
-                            app.startingPlayer = 0;
-                            app.gameCreator = false;
-                            app.playersLeft = 0;
-                            app.neededVotes = 0;
-                            app.hasVoted = false;
-                            app.ghostsWin = false;
-                            app.playersWin = false;
-                            app.kickedPlayerName = '';
-                            app.state = 1;
-                        } else {
-                            console.log("Starting next round...")
-                            app.state = 2
-                        }
-                    }, 5000);
+                    if (!app.ghostsWin && !app.playersWin) {
+                        setTimeout(function() {
+                            console.log("Starting next round...");
+                            app.state = 2;
+                        }, 5000);
+                    }
                 })
                 socket.on('gameData', function (data) {
                     // Gets all the game data to the users
                     console.log('Gathering all of the gameData');
+                    app.users = data.users;
                     app.gameData = data;
                     let wordList = data.words;
+                    app.gameCreated = true;
                     for (let i = 0; i < app.users.length; ++i) {
                         // Add word to users array
                         app.users[i].word = wordList[0];
                         if (app.users[i].word === "ghost") {
                             app.users[i].isGhost = true;
+                        } else {
+                            app.users[i].isGhost = false;
                         }
                         wordList.splice(0,1);
-                        // add to ghostsList
-                        if (app.users[i].isGhost) {
-                            app.ghostsList.push(app.users[i].name)
-                        }
                     }
                     for (let i = 0; i < app.users.length; ++i) {
                         if (app.users[i].id == app.player.id) {
@@ -431,6 +645,7 @@
                         'ghostsRemaining': this.ghostsRemaining,
                         'playersLeft': this.playersLeft,
                         'neededVotes': this.neededVotes,
+                        'hostSocketId': this.hostSocketId
                     }
                     socket.emit('updateInformation', obj);
                 },
@@ -458,6 +673,16 @@
                 createGamePart2: function () {
                     // Gets all of the words in an array and sends to server
                     console.log("Creating Game data part 2");
+                    // Gets the game maker out of the game
+                    this.isGameMaker = true;
+                    for (let i = 0; i < this.users.length; ++i) {
+                        if (this.users[i].socketid === socket.id) {
+                            this.users.splice(i, 1);
+                        }
+                    }
+                    if (this.player.socketid === socket.id) {
+                        this.player.isGhost = true;
+                    }
                     this.gameData.playerCount = parseInt(this.gameData.topicCount) + parseInt(this.gameData.subtopicCount);
                     if (this.gameData.words.length !== this.gameData.playerCount) {
                         alert("Please fill out all the boxes first")
@@ -469,7 +694,10 @@
                         this.gameData.playerCount += parseInt(this.gameData.ghostCount)
                         this.createState = 2;
                         this.gameCreator = false;
-                        this.gameData.roomName = this.roomName
+                        this.gameData.roomName = this.roomName;
+                        this.gameData.users = this.users;
+                        this.gameData.topic = this.gameData.words[0].toLowerCase();
+                        this.creatorData = this.gameData;
                         socket.emit('gameData', this.gameData);
                         alert("Success! Game was sent to server!");
                     }
@@ -488,6 +716,7 @@
                 voteForStart(index) {
                     // Ghosts vote for who should go first
                     console.log("vote for " + index)
+                    this.player.votedIndex = index;
                     if (!this.hasVoted) {
                         this.users[index].votes += 1;
                         this.hasVoted = true;
@@ -512,6 +741,7 @@
                 unvoteForStart(index) {
                     // Ghosts unvote for who should go first
                     console.log("unvote for " + index)
+                    this.player.votedIndex = -1;
                     if (this.hasVoted) {
                         this.users[index].votes -= 1;
                         this.hasVoted = false;
@@ -526,6 +756,7 @@
                 voteForKick(index) {
                     // Players voting for player to kick
                     console.log("vote to kick " + index)
+                    this.player.votedIndex = index;
                     if (!this.hasVoted) {
                         this.users[index].votes += 1;
                         this.hasVoted = true;
@@ -549,6 +780,7 @@
                 },
                 unvoteForKick(index) {
                     console.log("unvote for " + index)
+                    this.player.votedIndex = -1;
                     if (this.hasVoted) {
                         this.users[index].votes -= 1;
                         this.hasVoted = false;
@@ -559,6 +791,28 @@
                         }
                         socket.emit('startKick', voteObj)
                     }
+                },
+                leaveRoom() {
+                    console.log("Leaving the room.");
+                    let obj = {
+                        'room': this.roomName,
+                        'isHost': this.isHost,
+                        'socketid': socket.id
+                    }
+                    app.state = 5;
+                    socket.emit('leaveRoom', obj);
+                },
+                guessTopic() {
+                    this.player.hasGuessed = true;
+                    console.log(this.player.guess)
+                    if (this.player.guess === app.gameData.topic) {
+                        app.ghostsGuessed = 1;
+                    }
+                    let obj = {
+                        'guess': this.player.guess.toLowerCase(),
+                        'room': this.roomName,
+                    }
+                    socket.emit('ghostGuessed', obj);
                 }
             }
         });

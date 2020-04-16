@@ -1,64 +1,228 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: #ffffff;
-    background-color: #2d3436;
+    font-family: Creepster, Helvetica, sans-serif;
+    color: #f4f0f8;
+    background-color: #f4f0f8;
+    letter-spacing: 6px;
   }
+
+.full {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.45);
+    width: 70vw;
+    height: 95vh;
+}
 
 .screen-view {
     margin-top: 15px;
-    background-color: #5b6a6e;
-    height: 600px;
-    border-left: 4px solid rgb(0, 0, 0);
-    border-right: 4px solid rgb(0, 0, 0);
-    border-top: 4px solid rgb(0, 0, 0);
+    height: 80%;
+    background: #41295a;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #2F0743, #41295a);
+    background: linear-gradient(to right, #2F0743, #41295a);
+    position: relative;
 }
 .controller-view {
-    background-color: #444f52;
-    height: 200px;
-    border: 4px solid rgb(0, 0, 0);
+    background: #41295a;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #2F0743, #41295a);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #2F0743, #41295a); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    height: 20%;
+    border-top: 4px solid #9e7bc3;
+    position: relative;
 }
 
 /* -------------------LOGIN SCREEN------------------ */
-
-.login-view {
-    margin-top: 30px;
-    width: auto;
-}
-.login-view h2 {
-    margin-bottom: 150px;
-    font-size: 60px;
-}
-.login-view h3 {
+h1 {
+    letter-spacing: 12px;
+    font-size: 70px;
     text-align: center;
+    margin-top: 30px;
     margin-bottom: 30px;
 }
-.login-view form {
+.buttonBlock {
     text-align: center;
+}
+.buttonBlock button {
+    width: 230px;
+    background-color: #f4f0f8;
+    border: none;
+    color: #41295a;
+    padding: 12px 24px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+    margin: 15px 2px;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.version {
+    position: absolute;
+    letter-spacing: 6px;
+    font-size: 15px;
+    bottom: 8px;
+    right: 16px;
+    font-family: Helvetica;
+}
+.roomkey {
+    position: absolute;
+    letter-spacing: 6px;
+    font-size: 15px;
+    top: 8px;
+    right: 16px;
+    font-family: Helvetica;
+}
+.leave {
+    position: absolute;
+    letter-spacing: 6px;
+    font-size: 15px;
+    bottom: 16px;
+    left: 16px;
+}
+.backButton {
+    position: absolute;
+    letter-spacing: 6px;
+    font-size: 15px;
+    top: 20px;
+    left: 20px;
+}
+
+.login-view h5 {
+    font-size: 14px;
+    font-family: Helvetica, sans-serif;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.createScreen h3 {
+    letter-spacing: 4px;
+}
+.createScreen h4 {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-family: Helvetica;
+    letter-spacing: 7px;
+}
+
+.joinText {
+    height: 40px;
+    letter-spacing: 6px;
+    margin-right: 15px;
+    padding: 5px;
+}
+
+.joinDiv {
+    margin-top: 40px;
 }
 
 /* -------------------MENU SCREEN------------------ */
 .playerRow {
     width: 100%;
-    border-bottom: 1px solid #2c3335;
+    height: auto;
+    border-top: 2px solid #9e7bc3;
     padding: 10px;
+    padding-left: 30px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+.playerRow:first-child {
+    border-top: 2px solid #9e7bc300;
+}
+.playerRowStart {
+    width: 100%;
+    height: 100%;
+    margin-left: 0px;
 }
 
 .createButton {
     margin: auto;
+    position: relative;
 }
-.createButton h4 {
-    margin-top: 30px;
-    text-align: center;
-    color: #008b17;
-}
-.input-numbers {
+.inputNumbers {
+    font-family: Helvetica;
     margin: auto;
+    text-align: right;
+}
+.inputNumbers label {
+    display: inline-block;
+}​
+
+.longform form {
+    display: block;
 }
 
-.topic-form {
+.longForm {
+    overflow-y:scroll; 
+    position:relative;
+    height: 400px;
+}
+.createGameButton {
+    width: 80%;
+    height: 40px;
+    margin-right: 10%;
+    margin-top: 15px;
+    font-family: Creepster;
+}
+.soloButton {
+    width: 300px;
+    background-color: #f4f0f8;
+    border: none;
+    color: #41295a;
+    padding: 12px 24px;
+    text-align: center;
+    text-decoration: none;
     display: inline-block;
-    margin: 5px;
-    border: 1px solid #2c3335;
+    font-size: 20px;
+    margin: 15px 2px;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.ghostChoosing {
+    width: 60%;
+    margin: auto;
+    text-align: center;
+}
+.playerChoosing {
+    width: 60%;
+    margin: auto;
+    text-align: center;
+}
+.ghostChoosing h4 {
+    line-height: 25px;
+    font-size: 17px;
+    text-align: center;
+    margin-top: 12px;
+}
+
+.playerChoosing h4 {
+    line-height: 25px;
+    font-size: 17px;
+    text-align: center;
+    margin-top: 12px;
+}
+
+.voteCount {
+    margin-top: 10px;
+}
+.resultContent {
+    margin: auto;
+    width: 80%;
+    text-align: center;
+    margin-top: 150px;
+}
+
+.resultContent label {
+    font-size: 22px;
+}
+
+.resultContent h4{
+    margin-bottom: 30px;
+    font-size: 30px;
+}
+
+.guessButton {
+    margin-top: 30px;
+    width: 30%
 }

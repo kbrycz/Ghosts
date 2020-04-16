@@ -9,8 +9,26 @@ app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'))
 let idNumber = 0
 
 let rooms = []
+let hosts = {}
 io.on('connection', (socket) => {
     console.log("someone has connected")
+
+    socket.on('disconnect', () => {
+        console.log('User has disconnected');
+        if (socket.id in hosts) {
+            console.log('host has disconnected');
+            io.in(hosts[socket.id]).emit('hostDisconnected');
+            var index = rooms.indexOf(hosts[socket.id]);
+            if (index !== -1) {
+                rooms.splice(index, 1);
+            }
+            delete hosts[socket.id];
+        }
+    })
+    socket.on('everyoneLeave', (room) => {
+        console.log("exiting room");
+        socket.leave(room);
+    })
 
     // STAGES 5-7
     socket.on('createRoom', (roomName) => {
@@ -23,6 +41,7 @@ io.on('connection', (socket) => {
                 'room': roomName,
                 'id': socket.id
             }
+            hosts[socket.id] = roomName;
             console.log('created room: ' + roomName);
             io.in(roomName).emit('createRoom', obj);
         }
@@ -45,6 +64,14 @@ io.on('connection', (socket) => {
     socket.on('updateInformation', (obj) => {
         io.in(obj.roomName).emit('updateInformation', obj);
     })
+    socket.on('leaveRoom', (obj) => {
+        socket.leave(obj.room);
+        if (obj.isHost) {
+            io.in(obj.room).emit('hostLeft', obj);
+        } else {
+            io.in(obj.room).emit('leaveRoom', obj);
+        }
+    })
     // STAGE 0
     socket.on('join', (obj) => {
         socket.username = obj.username;
@@ -57,7 +84,10 @@ io.on('connection', (socket) => {
             'word': '',
             'isGhost': false,
             'votes': 0, 
-            'isKicked': false
+            'isKicked': false,
+            'hasGuessed': false,
+            'guess': '',
+            'votedIndex': -1,
         });
         io.in(obj.roomName).emit('join', 
         {
@@ -67,12 +97,17 @@ io.on('connection', (socket) => {
             'word': '',
             'isGhost': false,
             'votes': 0,
-            'isKicked': false
+            'isKicked': false,
+            'hasGuessed': false,
+            'guess': '',
+            'votedIndex': -1,
         });
         idNumber += 1
     })
 
-    // STAGE 1
+    socket.on('ghostGuessed', (obj) => {
+        io.in(obj.room).emit('ghostGuessed', obj.guess);
+    })
     socket.on('gameData', (data) => {
         data.words.sort(() => Math.random() - 0.5);
         io.in(data.roomName).emit('gameData', data);
