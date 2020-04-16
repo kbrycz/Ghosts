@@ -317,6 +317,8 @@ methods: {
         // starts the game and sends to server
         console.log('Starting game startgame function')
         this.state = 2
+        this.gameCreator = false;
+        this.createState = 0;
         let startObj = {
             'ghostCount': this.gameData.ghostCount,
             'playersLeft': (this.gameData.playerCount - this.gameData.ghostCount),
