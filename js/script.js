@@ -2,6 +2,7 @@ let socket = null;
 var app = new Vue({
 el: '#app',
 data: {
+    version: '1.0.1',
     hostSocketId: 0,
     isHost: false,
     roomName: '',

@@ -202,7 +202,7 @@ h1 {
 }
 .ghostChoosing h4 {
     font-family: Montserrat, Helvetica;
-    line-height: 22px;
+    line-height: 24px;
     font-size: 14px;
     text-align: center;
     margin-top: 14px;
@@ -210,10 +210,10 @@ h1 {
 
 .playerChoosing h4 {
     font-family: Montserrat, Helvetica;
-    line-height: 25px;
-    font-size: 17px;
+    line-height: 24px;
+    font-size: 14px;
     text-align: center;
-    margin-top: 12px;
+    margin-top: 14px;
 }
 
 .voteCount {

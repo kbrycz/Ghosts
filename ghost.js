@@ -2,7 +2,9 @@ const express = require('express')
 const app = express()
 const http = require('http').Server(app)
 const io = require('socket.io')(http, {
-
+    pingInterval: 10000,
+    pingTimeout: (1000 * 60) * 5,
+    cookie: false
 })
 
 app.use('/style', express.static(__dirname + '/style'))
