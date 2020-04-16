@@ -18,7 +18,7 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log('User has disconnected');
-        console.log.log(socket.id)
+        console.log(socket.id)
         if (socket.id in hosts) {
             console.log('host has disconnected');
             io.in(hosts[socket.id]).emit('hostDisconnected');
