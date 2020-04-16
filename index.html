@@ -1,8 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-US">
     <head>
+        <!-- Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163802057-1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'UA-163802057-1');
+        </script>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Online multiplayer version of the party game Ghosts.">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="style/style.css">
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
@@ -11,7 +20,7 @@
     </head>
     <body>
         <div id="app">
-            
+
             <!-----------------------------------HOME SCREEN - STAGE 5---------------------------------------->
 
             <div v-if="state === 5" class="home">
@@ -51,7 +60,7 @@
                                 <div class="buttonBlock">
                                     <h3>Here is your invite code:</h3>
                                     <h4>{{roomName}}</h4>
-                                    <h5>Invite Link: http://localhost:3000/?{{roomName}}</h5>
+                                    <h5>http://ghostsonline.me/?{{roomName}}</h5>
                                 </div>
                                 <div class="buttonBlock">
                                     <button v-on:click="state = 0">Continue</button>
