@@ -190,6 +190,7 @@ h1 {
 }
 
 .ghostChoosing {
+
     width: 60%;
     margin: auto;
     text-align: center;
@@ -200,6 +201,7 @@ h1 {
     text-align: center;
 }
 .ghostChoosing h4 {
+    font-family: Montserrat, Helvetica;
     line-height: 25px;
     font-size: 17px;
     text-align: center;
@@ -207,6 +209,7 @@ h1 {
 }
 
 .playerChoosing h4 {
+    font-family: Montserrat, Helvetica;
     line-height: 25px;
     font-size: 17px;
     text-align: center;
