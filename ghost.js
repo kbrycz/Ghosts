@@ -1,7 +1,9 @@
 const express = require('express')
 const app = express()
 const http = require('http').Server(app)
-const io = require('socket.io')(http)
+const io = require('socket.io')(http, {
+
+})
 
 app.use('/style', express.static(__dirname + '/style'))
 app.use('/images', express.static(__dirname + '/images'))
@@ -16,8 +18,9 @@ io.on('connection', (socket) => {
     console.log("someone has connected")
     console.log(socket.id)
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', (reason) => {
         console.log('User has disconnected');
+        console.log(reason);
         console.log(socket.id)
         if (socket.id in hosts) {
             console.log('host has disconnected');
