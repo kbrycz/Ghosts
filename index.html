@@ -353,6 +353,7 @@
 
                                     <h4 class="ghostName" v-if="!isGameMaker && !user.isGhost && user.votedIndex !== -1">({{users[user.votedIndex].name}})</h4>
                                     <h4 class="ghostName" v-if="!isGameMaker && !player.isGhost && user.isGhost && user.votedIndex !== -1">({{users[user.votedIndex].name}})</h4>
+                                    <h4 class="ghostName" v-if="!isGameMaker && !user.isGhost && user.votedIndex === -1 & user.id === -1">({{user.word}})</h4>
                                 </div>
                                 <div class="col">
                                     <div class="row">

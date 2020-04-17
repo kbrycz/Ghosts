@@ -151,13 +151,28 @@ mounted: function () {
         // starts the game and changes state for everyone
         console.log('Starting player is index ' + index);
         app.startingPlayer = parseInt(index)
-        app.state = 3;
         app.player.votedIndex = -1;
         for (let i = 0; i < app.users.length; ++i) {
             app.users[i].votes = 0;
             app.users[i].votedIndex = -1;
         }
         app.hasVoted = false;
+
+        // Add user temporarily for dont vote
+        var dontVote = {            
+            'socketid': 0,
+            'name': 'NOBODY',
+            'id': -1, 
+            'word': 'SHOW MERCY',
+            'isGhost': false,
+            'votes': 0,
+            'isKicked': false,
+            'hasGuessed': false,
+            'guess': '',
+            'votedIndex': -1,
+        }
+        app.users.push(dontVote);
+        app.state = 3;
     })
     socket.on('startVote', function (voteObj) {
         // updates the voting for ghosts
@@ -191,15 +206,25 @@ mounted: function () {
         // Goes to result screen after player is kicked
         console.log('Gathering results from kicked player: ' + index);
         app.player.votedIndex = -1;
+        let isNobody = false;
+        let nobodyIndex = parseInt(app.users.length - 1);
         for (let i = 0; i < app.users.length; ++i) {
             app.users[i].votes = 0;
             app.users[i].votedIndex = -1;
         }
+        if (index == nobodyIndex) {
+            isNobody = true;
+        }
+        console.log(index);
+        console.log(nobodyIndex)
+        console.log(app.users)
         app.hasVoted = false;
         // Delete user from array
-        if (app.users[index].isGhost) {
+        if (app.users[index].isGhost && !isNobody) {
             app.ghostsRemaining -= 1;
-        } else {
+        } 
+        else if (!app.users[index].isGhost && !isNobody) {
+            console.log("in playersleft")
             app.playersLeft -= 1;
         }
         app.state = 4;
