@@ -252,8 +252,16 @@
                                     </div>
                                 </div>
                                 <div class="col-3">
-                                    <h4 class="ghostName" v-if="player.isKicked && user.isGhost">(Ghost)</h4>
-                                    <h4 class="ghostName" v-if="player.isGhost && !player.isKicked && user.isGhost">(Ghost)</h4>
+                                    <h4 class="ghostName" v-if="!player.isKicked && player.isGhost && user.isGhost && !isGameMaker && user.votedIndex === -1">(Ghost)</h4>
+                                    <h4 class="ghostName" v-if="!player.isKicked && player.isGhost && user.isGhost && user.votedIndex !== -1 && !isGameMaker">(Ghost, {{users[user.votedIndex].name}})</h4>
+
+                                    <h4 class="ghostName" v-if="player.isKicked && user.isGhost && !isGameMaker && user.votedIndex === -1">(Ghost)</h4>
+                                    <h4 class="ghostName" v-if="player.isKicked && user.isGhost && user.votedIndex !== -1 && !isGameMaker">(Ghost, {{users[user.votedIndex].name}})</h4>
+
+
+                                    <h4 class="ghostName" v-if="isGameMaker && user.isGhost && user.votedIndex === -1">(Ghost)</h4>
+                                    <h4 class="ghostName" v-if="isGameMaker && user.isGhost && user.votedIndex !== -1">(Ghost, {{users[user.votedIndex].name}})</h4>
+                                    <h4 class="ghostName" v-if="isGameMaker && !user.isGhost">({{user.word}})</h4>
                                 </div>
                                 <div class="col">
                                     <div v-if="player.isGhost" class="row">
@@ -286,7 +294,8 @@
                         <div class="container ghostChoosing">
                             <div v-if="player.isGhost">
                                 <div v-if="!player.isKicked">
-                                    <h4>You are a GHOST. Choose someone to start with</h4>
+                                    <h4 v-if="isGameMaker">The ghosts are choosing a starter</h4>
+                                    <h4 v-else>You are a GHOST. Choose someone to start with</h4>
                                 </div>
                                 <div v-else>
                                     <h4>You are a GHOST. But you cannot help your team vote while kicked.</h4>
@@ -324,8 +333,21 @@
                                     </div>
                                 </div>
                                 <div class="col-3">
-                                    <h4 class="ghostName" v-if="player.isKicked && user.isGhost">(Ghost)</h4>
-                                    <h4 class="ghostName" v-if="player.isGhost && !player.isKicked && user.isGhost">(Ghost)</h4>
+                                    <h4 class="ghostName" v-if="!player.isKicked && player.isGhost && user.isGhost && !isGameMaker && user.votedIndex === -1">(Ghost)</h4>
+                                    <h4 class="ghostName" v-if="!player.isKicked && player.isGhost && user.isGhost && user.votedIndex !== -1 && !isGameMaker">(Ghost, {{users[user.votedIndex].name}})</h4>
+
+                                    <h4 class="ghostName" v-if="player.isKicked && user.isGhost && !isGameMaker && user.votedIndex === -1">(Ghost)</h4>
+                                    <h4 class="ghostName" v-if="player.isKicked && user.isGhost && user.votedIndex !== -1 && !isGameMaker">(Ghost, {{users[user.votedIndex].name}})</h4>
+
+
+                                    <h4 class="ghostName" v-if="isGameMaker && user.isGhost && user.votedIndex === -1">(Ghost)</h4>
+                                    <h4 class="ghostName" v-if="isGameMaker && user.isGhost && user.votedIndex !== -1">(Ghost, {{users[user.votedIndex].name}})</h4>
+
+                                    <h4 class="ghostName" v-if="isGameMaker && !user.isGhost && user.votedIndex !== -1">({{user.word}}, {{users[user.votedIndex].name}})</h4>
+                                    <h4 class="ghostName" v-if="isGameMaker && !user.isGhost && user.votedIndex === -1">({{user.word}})</h4>
+
+                                    <h4 class="ghostName" v-if="!isGameMaker && !user.isGhost && user.votedIndex !== -1">({{users[user.votedIndex].name}})</h4>
+                                    <h4 class="ghostName" v-if="!isGameMaker && !player.isGhost && user.isGhost && user.votedIndex !== -1">({{users[user.votedIndex].name}})</h4>
                                 </div>
                                 <div class="col">
                                     <div class="row">
@@ -356,9 +378,9 @@
                             <button class="btn btn-light" v-on:click="leaveRoom">Quit</button>
                         </div>
                         <div class="container playerChoosing">
-                                <h4>{{users[startingPlayer].name}}: You were chosen to start!</h4>
-                                <h4>*You need {{neededVotes}} to kick someone out*</h4>
-                                <h4>Your Word : {{player.word}}</h4>
+                            <h4><strong>{{users[startingPlayer].name}}:</strong> You were chosen to start!</h4>
+                            <h4>You need <strong>{{neededVotes}}</strong> to kick someone out</h4>
+                            <h4 v-if="!isGameMaker">Your Word : <strong>{{player.word}}</strong></h4>
                         </div>
                     </div>
                 </div>

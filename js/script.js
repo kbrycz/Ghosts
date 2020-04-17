@@ -2,7 +2,7 @@ let socket = null;
 var app = new Vue({
 el: '#app',
 data: {
-    version: '1.0.1',
+    version: '1.2.1',
     hostSocketId: 0,
     isHost: false,
     roomName: '',
@@ -152,8 +152,10 @@ mounted: function () {
         console.log('Starting player is index ' + index);
         app.startingPlayer = parseInt(index)
         app.state = 3;
+        app.player.votedIndex = -1;
         for (let i = 0; i < app.users.length; ++i) {
             app.users[i].votes = 0;
+            app.users[i].votedIndex = -1;
         }
         app.hasVoted = false;
     })
@@ -161,18 +163,29 @@ mounted: function () {
         // updates the voting for ghosts
         console.log("updating votes for everyone")
         app.users[parseInt(voteObj.index)].votes = parseInt(voteObj.votes)
+        for (let i = 0; i < app.users.length; ++i) {
+            if (app.users[i].socketid === voteObj.player) {
+                app.users[i].votedIndex = voteObj.index;
+            }
+        }
     })
     socket.on('startKick', function (voteObj) {
         // updates the voting for kicking
         console.log("updating votes for everyone to kick")
         app.users[parseInt(voteObj.index)].votes = parseInt(voteObj.votes)
+        for (let i = 0; i < app.users.length; ++i) {
+            if (app.users[i].socketid === voteObj.player) {
+                app.users[i].votedIndex = voteObj.index;
+            }
+        }
     })
     socket.on('result', function (index) {
         // Goes to result screen after player is kicked
         console.log('Gathering results from kicked player: ' + index);
-        app.state = 4;
+        app.player.votedIndex = -1;
         for (let i = 0; i < app.users.length; ++i) {
             app.users[i].votes = 0;
+            app.users[i].votedIndex = -1;
         }
         app.hasVoted = false;
         // Delete user from array
@@ -181,6 +194,7 @@ mounted: function () {
         } else {
             app.playersLeft -= 1;
         }
+        app.state = 4;
         app.kickedPlayerName = app.users[index].name
         console.log("kicked " + app.kickedPlayerName + " at index: " + index);
         console.log(app.users);
@@ -337,7 +351,8 @@ methods: {
             let voteObj = {
                 'index': index,
                 'votes': this.users[index].votes,
-                'roomName': this.roomName
+                'roomName': this.roomName,
+                'player': this.player.socketid
             }
             socket.emit('startVote', voteObj)
         }
@@ -362,7 +377,8 @@ methods: {
             let voteObj = {
                 'index': index,
                 'votes': this.users[index].votes,
-                'roomName': this.roomName
+                'roomName': this.roomName,
+                'player': this.player.socketid
             }
             socket.emit('startVote', voteObj)
         }
@@ -377,7 +393,8 @@ methods: {
             let voteObj = {
                 'index': index,
                 'votes': this.users[index].votes,
-                'roomName': this.roomName
+                'roomName': this.roomName,
+                'player': this.player.socketid
             }
             socket.emit('startKick', voteObj)
         }
@@ -401,7 +418,8 @@ methods: {
             let voteObj = {
                 'index': index,
                 'votes': this.users[index].votes,
-                'roomName': this.roomName
+                'roomName': this.roomName,
+                'player': this.player.socketid
             }
             socket.emit('startKick', voteObj)
         }
