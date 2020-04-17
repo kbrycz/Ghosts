@@ -65,12 +65,16 @@ mounted: function () {
             app.state = 0;
         }
     })
+    socket.on('deleteGame', function (obj) {
+        app.users = obj.users;
+        app.gameData = {}
+    })
     socket.on('noRoom', function (name) {
-        console.log('hi')
         alert('No room with key: ' + name);
     })
     socket.on('return', function () {
         app.users = app.usersInLobby;
+        app.player.isKicked = false;
         app.state = 1;
     })
     socket.on('hostDisconnected', function () {
@@ -297,6 +301,17 @@ methods: {
             socket.emit('joinRoom', this.roomName);
         }
     },
+    deleteGame() {
+        console.log('deleting game sent');
+        this.createState = 0;
+        this.isGameMaker = 0;
+        this.gameCreated = false;
+        var obj = {
+            'users': this.usersInLobby,
+            'roomName': this.roomName,
+        }
+        socket.emit('deleteGame', obj);
+    },
     updateInformation() {
         console.log("Updating info for all users");
         let obj = {
@@ -367,15 +382,20 @@ methods: {
     startGame: function () {
         // starts the game and sends to server
         console.log('Starting game startgame function')
-        this.state = 2
-        this.gameCreator = false;
-        this.createState = 0;
-        let startObj = {
-            'ghostCount': this.gameData.ghostCount,
-            'playersLeft': (this.gameData.playerCount - this.gameData.ghostCount),
-            'roomName': this.roomName
+        if (this.users.length === this.gameData.playerCount) {
+            this.state = 2
+            this.gameCreator = false;
+            this.createState = 0;
+            let startObj = {
+                'ghostCount': this.gameData.ghostCount,
+                'playersLeft': (this.gameData.playerCount - this.gameData.ghostCount),
+                'roomName': this.roomName
+            }
+            socket.emit('start', startObj);
+        } else {
+            alert("Your game requires that you have " + this.gameData.playerCount.toString() + ' players.')
         }
-        socket.emit('start', startObj);
+ 
     },
     voteForStart(index) {
         // Ghosts vote for who should go first

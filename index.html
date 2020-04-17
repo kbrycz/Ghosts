@@ -225,6 +225,9 @@
                         <div class="roomkey">
                             <p>Key: {{roomName}}</p>
                         </div>
+                        <div v-if="isGameMaker && createState === 2" class="deleteGame">
+                            <button class="btn btn-light" v-on:click="deleteGame">Delete Game</button>
+                        </div>
                         <div class="leave">
                             <button class="btn btn-light" v-on:click="leaveRoom">Quit</button>
                         </div>

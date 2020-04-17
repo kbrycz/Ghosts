@@ -80,11 +80,19 @@ h1 {
     right: 16px;
     font-family: Montserrat, Helvetica;
 }
+.deleteGame {
+    position: absolute;
+    letter-spacing: 6px;
+    font-size: 15px;
+    top: 10px;
+    left: 16px;
+}
+
 .leave {
     position: absolute;
     letter-spacing: 6px;
     font-size: 15px;
-    bottom: 16px;
+    bottom: 10px;
     left: 16px;
 }
 .backButton {
