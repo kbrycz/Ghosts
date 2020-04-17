@@ -247,6 +247,9 @@ mounted: function () {
             console.log("Tell player he has been kicked and stop action")
             app.player.isKicked = true;
         }
+        if (!isNobody) {
+            app.users.splice(nobodyIndex, 1);
+        }
         app.users.splice(index, 1);
         if (!app.ghostsWin && !app.playersWin) {
             setTimeout(function() {
