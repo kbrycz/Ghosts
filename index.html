@@ -339,7 +339,6 @@
                                     <h4 class="ghostName" v-if="player.isKicked && user.isGhost && !isGameMaker && user.votedIndex === -1">(Ghost)</h4>
                                     <h4 class="ghostName" v-if="player.isKicked && user.isGhost && user.votedIndex !== -1 && !isGameMaker">(Ghost, {{users[user.votedIndex].name}})</h4>
 
-
                                     <h4 class="ghostName" v-if="isGameMaker && user.isGhost && user.votedIndex === -1">(Ghost)</h4>
                                     <h4 class="ghostName" v-if="isGameMaker && user.isGhost && user.votedIndex !== -1">(Ghost, {{users[user.votedIndex].name}})</h4>
 

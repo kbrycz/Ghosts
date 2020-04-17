@@ -165,7 +165,11 @@ mounted: function () {
         app.users[parseInt(voteObj.index)].votes = parseInt(voteObj.votes)
         for (let i = 0; i < app.users.length; ++i) {
             if (app.users[i].socketid === voteObj.player) {
-                app.users[i].votedIndex = voteObj.index;
+                if(voteObj.isPlus) {
+                    app.users[i].votedIndex = voteObj.index;
+                } else {
+                    app.users[i].votedIndex = -1;
+                }
             }
         }
     })
@@ -175,7 +179,11 @@ mounted: function () {
         app.users[parseInt(voteObj.index)].votes = parseInt(voteObj.votes)
         for (let i = 0; i < app.users.length; ++i) {
             if (app.users[i].socketid === voteObj.player) {
-                app.users[i].votedIndex = voteObj.index;
+                if(voteObj.isPlus) {
+                    app.users[i].votedIndex = voteObj.index;
+                } else {
+                    app.users[i].votedIndex = -1;
+                }
             }
         }
     })
@@ -352,7 +360,8 @@ methods: {
                 'index': index,
                 'votes': this.users[index].votes,
                 'roomName': this.roomName,
-                'player': this.player.socketid
+                'player': this.player.socketid,
+                'isPlus': true,
             }
             socket.emit('startVote', voteObj)
         }
@@ -378,7 +387,8 @@ methods: {
                 'index': index,
                 'votes': this.users[index].votes,
                 'roomName': this.roomName,
-                'player': this.player.socketid
+                'player': this.player.socketid,
+                'isPlus': false,
             }
             socket.emit('startVote', voteObj)
         }
@@ -394,7 +404,8 @@ methods: {
                 'index': index,
                 'votes': this.users[index].votes,
                 'roomName': this.roomName,
-                'player': this.player.socketid
+                'player': this.player.socketid,
+                'isPlus': true,
             }
             socket.emit('startKick', voteObj)
         }
@@ -419,7 +430,8 @@ methods: {
                 'index': index,
                 'votes': this.users[index].votes,
                 'roomName': this.roomName,
-                'player': this.player.socketid
+                'player': this.player.socketid,
+                'isPlus': true,
             }
             socket.emit('startKick', voteObj)
         }
