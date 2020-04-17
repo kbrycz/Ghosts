@@ -133,7 +133,8 @@
                                 </div>
                                 <div class="buttonBlock">
                                     <form @submit.prevent="setUsername" class="joinDiv">
-                                        <input class="joinText" type ="text" placeholder="Username..." v-model:value="username" />
+                                        <input class="joinText" type ="text" placeholder="Username..." v-model:value="username" required
+                                        minlength="2" maxlength="12" />
                                         <input class="btn btn-light" type="submit" value = "join" />
                                     </form>
                                 </div>
@@ -181,15 +182,18 @@
                                 <form @submit.prevent="createGamePart1">
                                     <div>
                                         <label>Number of ghosts: </label>
-                                        <input type ="number" placeholder="ghosts..." v-model:value="gameData.ghostCount" />
+                                        <input type ="number" placeholder="ghosts..." v-model:value="gameData.ghostCount" required
+                                        minlength="2" maxlength="12"/>
                                     </div>
                                     <div>
                                         <label>Number of topics: </label>
-                                        <input type ="number" placeholder="topics..." v-model:value="gameData.topicCount" />
+                                        <input type ="number" placeholder="topics..." v-model:value="gameData.topicCount" required
+                                        minlength="2" maxlength="12"/>
                                     </div>
                                     <div>
                                         <label>Number of subtopics: </label>
-                                        <input type ="number" placeholder="subtopics..." v-model:value="gameData.subtopicCount" />
+                                        <input type ="number" placeholder="subtopics..." v-model:value="gameData.subtopicCount" required
+                                        minlength="2" maxlength="12"/>
                                     </div>
                                     <div>
                                         <input class="btn btn-light createGameButton" type="submit" value = "Continue" />
@@ -200,11 +204,13 @@
                                 <form @submit.prevent="createGamePart2">
                                     <div v-for="i in parseInt(gameData.topicCount)" class="topic-form">
                                         <label>Enter a topic</label>
-                                        <input type ="text" placeholder="topic..." v-model:value="gameData.words[parseInt(i) - 1]" />
+                                        <input type ="text" placeholder="topic..." v-model:value="gameData.words[parseInt(i) - 1]" required
+                                        minlength="2" maxlength="12"/>
                                     </div>
                                     <div v-for="i in parseInt(gameData.subtopicCount)" class="topic-form">
                                         <label>Enter a subtopic</label>
-                                        <input type ="text" placeholder="subtopic" v-model:value="gameData.words[(parseInt(i) - 1 + parseInt(gameData.topicCount))]" />
+                                        <input type ="text" placeholder="subtopic" v-model:value="gameData.words[(parseInt(i) - 1 + parseInt(gameData.topicCount))]" required
+                                        minlength="2" maxlength="12"/>
                                     </div>
                                     <div>
                                         <input class="btn btn-light createGameButton" type="submit" value = "Create Game" />
@@ -397,7 +403,8 @@
                                 <form @submit.prevent="guessTopic">
                                     <div>
                                         <label>Enter guess here:</label>
-                                        <input type ="text" placeholder="topic..." v-model:value="player.guess" />
+                                        <input type ="text" placeholder="topic..." v-model:value="player.guess" required
+                                        minlength="2" maxlength="12"/>
                                     </div>
                                     <div>
                                         <input class="btn btn-light guessButton" type="submit" value = "Guess" />

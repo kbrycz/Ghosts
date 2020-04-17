@@ -431,7 +431,7 @@ methods: {
                 'votes': this.users[index].votes,
                 'roomName': this.roomName,
                 'player': this.player.socketid,
-                'isPlus': true,
+                'isPlus': false,
             }
             socket.emit('startKick', voteObj)
         }
