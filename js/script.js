@@ -2,7 +2,7 @@ let socket = null;
 var app = new Vue({
 el: '#app',
 data: {
-    version: '1.2.3',
+    version: '1.2.4',
     hostSocketId: 0,
     isHost: false,
     roomName: '',
@@ -19,6 +19,7 @@ data: {
     gameData: {},
     isGameMaker: false,
     creatorData: {},
+    hostAdvanced: false,
 
     hasVoted: false,
     startingPlayer: 0,
@@ -75,7 +76,13 @@ mounted: function () {
     socket.on('return', function () {
         app.users = app.usersInLobby;
         app.player.isKicked = false;
+        app.ghostsWin = false;
+        app.playersWin = false;
+        app.hostAdvanced = false;
         app.state = 1;
+        app.ghostsGuessed = 0;
+        app.totalGuessed = 0;
+        app.gameCreated = false;
     })
     socket.on('hostDisconnected', function () {
         alert("Host has disconnected. Returning to main menu.")
@@ -165,7 +172,7 @@ mounted: function () {
         // Add user temporarily for dont vote
         var dontVote = {            
             'socketid': 0,
-            'name': 'NOBODY',
+            'name': 'Nobody',
             'id': -1, 
             'word': 'SHOW MERCY',
             'isGhost': false,
@@ -206,6 +213,25 @@ mounted: function () {
             }
         }
     })
+    socket.on('advance', function () {
+        console.log("Host advancing round");
+        for (let i = 0; i < app.users.length; ++i) {
+            app.users[i].votes = 0;
+            app.users[i].votedIndex = -1;
+        }
+
+        let nobodyIndex = parseInt(app.users.length - 1);
+        app.users.splice(nobodyIndex, 1);
+
+        app.hostAdvanced = true;
+        app.hasVoted = false;
+        app.state = 4;
+        setTimeout(function() {
+            console.log("Starting next round...");
+            app.state = 2;
+            app.hostAdvanced = false;
+        }, 5000);
+    })
     socket.on('result', function (index) {
         // Goes to result screen after player is kicked
         console.log('Gathering results from kicked player: ' + index);
@@ -238,8 +264,10 @@ mounted: function () {
         // Check to see if game is won 
         if (app.ghostsRemaining >= app.playersLeft) {
             app.ghostsWin = true;
+            app.isGameMaker = false;
         } else if (app.ghostsRemaining === 0) {
             app.playersWin = true;
+            app.isGameMaker = false;
         }
         // Reset variables
         app.neededVotes = app.playersLeft + app.ghostsRemaining
@@ -440,6 +468,10 @@ methods: {
             }
             socket.emit('startVote', voteObj)
         }
+    },
+    advance() {
+        console.log("host is advancing");
+        socket.emit('advance', this.roomName)
     },
     voteForKick(index) {
         // Players voting for player to kick

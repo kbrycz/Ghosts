@@ -389,6 +389,7 @@
                             <h4><strong>{{users[startingPlayer].name}}:</strong> You were chosen to start!</h4>
                             <h4>You need <strong>{{neededVotes}}</strong> to kick someone out</h4>
                             <h4 v-if="!isGameMaker">Your Word : <strong>{{player.word}}</strong></h4>
+                            <button v-if="isGameMaker" class="btn btn-light advance" v-on:click="advance">Advance</button>
                         </div>
                     </div>
                 </div>
@@ -414,35 +415,43 @@
                                     </div>
                                 </form>
                             </div>
-                            <div v-if="player.isGhost && player.hasGuessed && !isGameMaker">
+                            <div v-if="!hostAdvanced && player.isGhost && player.hasGuessed && !isGameMaker">
                                 <h4>You have guessed wrong...</h4>
                                 <h4>Waiting for other ghosts to submit...</h4>
                             </div>
                         </div>
-                        <div v-if="playersWin && ghostsGuessed === 1" class="resultContent">
+                        <div v-if="!hostAdvanced && playersWin && ghostsGuessed === 1" class="resultContent">
                             <h4>One of the ghosts has guessed correctly!</h4>
+                            <h4>The topic was: <strong>{{this.gameData.topic}}</strong></h4>
                             <h4>The Ghosts Win!</h4>
                             <div>
                                 <button class="btn btn-light" v-on:click="returnToLobby">Return to lobby</button>
                             </div>
                         </div>
-                        <div v-if="playersWin && ghostsGuessed === 2" class="resultContent">
+                        <div v-if="!hostAdvanced && playersWin && ghostsGuessed === 2" class="resultContent">
                             <h4>All of the ghosts have guessed incorrectly.</h4>
+                            <h4>The topic was: <strong>{{this.gameData.topic}}</strong></h4>
                             <h4>The Players Win!</h4>
                             <div>
                                 <button class="btn btn-light" v-on:click="returnToLobby">Return to lobby</button>
                             </div>
                         </div>
-                        <div class="resultContent" v-if="ghostsWin">
+                        <div class="resultContent" v-if="!hostAdvanced && ghostsWin">
                             <h4>You have kicked a human <b>{{kickedPlayerName}}</b> and the ghosts now outnumber you.</h4>
+                            <h4>The topic was: <strong>{{this.gameData.topic}}</strong></h4>
                             <h4>Ghosts win!</h4>
                             <div>
                                 <button class="btn btn-light" v-on:click="returnToLobby">Return to lobby</button>
                             </div>
                         </div>
-                        <div class="resultContent" v-if="!ghostsWin && !playersWin">
+                        <div class="resultContent" v-if="!hostAdvanced && !ghostsWin && !playersWin">
                             <h4>You have decided to kick <b>{{kickedPlayerName}}.</b></h4>
                             <h4>But there are still ghosts left...</h4>
+                            <h4>The game continues on...</h4>
+                        </div>
+                        <div class="resultContent" v-if="hostAdvanced && !ghostsWin && !playersWin">
+                            <h4>You have decided to kick nobody.</h4>
+                            <h4>There are still ghosts left...</h4>
                             <h4>The game continues on...</h4>
                         </div>
                     </div>

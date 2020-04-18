@@ -40,6 +40,10 @@ io.on('connection', (socket) => {
         console.log("deleting game");
         io.in(obj.roomName).emit('deleteGame', obj);
     })
+    socket.on('advance', (room) => {
+        console.log("Host advancing game");
+        io.in(room).emit('advance');
+    })
     socket.on('everyoneLeave', (room) => {
         console.log("exiting room");
         socket.leave(room);
