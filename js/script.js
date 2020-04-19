@@ -34,6 +34,7 @@ data: {
     ghostsGuessed: 0,
     totalGuessed: 0,
 },
+// -----------------------------------------------------------APPLICATION OPENING FUNCTIONS---------------------------------------------------------------------
 created: function () {
     // Current server that we are connecting to
     socket = io();
@@ -46,8 +47,9 @@ created: function () {
     }
     console.log(window.location);
 },
+// -----------------------------------------------------------SOCKET LISTENER FUNCTIONS---------------------------------------------------------------------
 mounted: function () {
-    // socket functions for listening to server updates
+    // -------------------Room socket functions----------------------------
     socket.on('createRoom', function (obj) {
         console.log('Created room: ' + obj.room);
         app.isHost = true;
@@ -66,66 +68,8 @@ mounted: function () {
             app.state = 0;
         }
     })
-    socket.on('deleteGame', function (obj) {
-        app.users = obj.users;
-        app.gameData = {}
-    })
     socket.on('noRoom', function (name) {
         alert('No room with key: ' + name);
-    })
-    socket.on('return', function () {
-        app.users = app.usersInLobby;
-        app.player.isKicked = false;
-        app.ghostsWin = false;
-        app.playersWin = false;
-        app.hostAdvanced = false;
-        app.state = 1;
-        app.ghostsGuessed = 0;
-        app.totalGuessed = 0;
-        app.gameCreated = false;
-    })
-    socket.on('hostDisconnected', function () {
-        alert("Host has disconnected. Returning to main menu.")
-        app.state = 5;
-        socket.emit('everyoneLeave', app.roomName);
-    })
-    socket.on('ghostGuessed', function (guess) {
-        console.log("A Ghost has guessed");
-        console.log(guess)
-        app.totalGuessed += 1;
-        if (guess === app.gameData.topic) {
-            app.ghostsGuessed = 1;
-        }
-        else if (app.totalGuessed >= app.gameData.ghostCount) {
-            app.ghostsGuessed = 2;
-        }
-    })
-    socket.on('leaveRoom', function (id) {
-        console.log("User has left the room");
-        let indexToLeave = -1;
-        for (let i = 0; i < app.users.length; ++i) {
-            if (app.users[i].socketid === id) {
-                indexToLeave = i;
-            }
-        }
-        if (indexToLeave !== -1) {
-            app.users.splice(indexToLeave, 1);
-            app.updateInformation();
-        }
-    })
-    socket.on('hostLeft', function (obj) {
-        console.log("Host left. Returning to menu")
-        alert("Host has left the game. Going to main menu.")
-        app.state = 5;
-    })
-    socket.on('updateInformation', function (obj) {
-        app.roomName = obj.roomName;
-        app.usersInLobby = obj.usersInLobby;
-        app.users = obj.users;
-        app.gameData = obj.gameData;
-        app.ghostsRemaining = obj.ghostsRemaining;
-        app.playersLeft = obj.playersLeft;
-        app.neededVotes = obj.neededVotes;
     })
     socket.on('join', function (user) {
         console.log('pushing to users')
@@ -146,6 +90,36 @@ mounted: function () {
             console.log(app.player)
         }
     })
+    // -------------------Leaving socket functions----------------------------
+    socket.on('hostDisconnected', function () {
+        alert("Host has disconnected. Returning to main menu.")
+        app.state = 5;
+        socket.emit('everyoneLeave', app.roomName);
+    })
+    socket.on('leaveRoom', function (id) {
+        console.log("User has left the room");
+        let indexToLeave = -1;
+        for (let i = 0; i < app.users.length; ++i) {
+            if (app.users[i].socketid === id) {
+                indexToLeave = i;
+            }
+        }
+        if (indexToLeave !== -1) {
+            app.users.splice(indexToLeave, 1);
+            app.updateInformation();
+        }
+    })
+    socket.on('hostLeft', function (obj) {
+        console.log("Host left. Returning to menu")
+        alert("Host has left the game. Going to main menu.")
+        app.state = 5;
+    })
+
+    // -------------------Game creating socket functions----------------------------
+    socket.on('deleteGame', function (obj) {
+        app.users = obj.users;
+        app.gameData = {}
+    })
     socket.on('start', function (startObj) {
         // starts the game and changes state for everyone
         console.log('Starting Game');
@@ -156,8 +130,41 @@ mounted: function () {
         app.neededVotes /= 2
         app.neededVotes = Math.floor(app.neededVotes)
         app.neededVotes += 1
-
     })
+    socket.on('gameData', function (data) {
+        // Gets all the game data to the users
+        console.log('Gathering all of the gameData');
+        app.users = data.users;
+        app.gameData = data;
+        let wordList = data.words;
+        app.gameCreated = true;
+        for (let i = 0; i < app.users.length; ++i) {
+            // Add word to users array
+            app.users[i].word = wordList[0];
+            if (app.users[i].word === "ghost") {
+                app.users[i].isGhost = true;
+            } else {
+                app.users[i].isGhost = false;
+            }
+            wordList.splice(0,1);
+        }
+        for (let i = 0; i < app.users.length; ++i) {
+            if (app.users[i].id === app.player.id) {
+                app.player.word = app.users[i].word;
+                app.player.isGhost = app.users[i].isGhost;
+            }
+        }
+    })
+    socket.on('updateInformation', function (obj) {
+        app.roomName = obj.roomName;
+        app.usersInLobby = obj.usersInLobby;
+        app.users = obj.users;
+        app.gameData = obj.gameData;
+        app.ghostsRemaining = obj.ghostsRemaining;
+        app.playersLeft = obj.playersLeft;
+        app.neededVotes = obj.neededVotes;
+    })
+    // -------------------Ghost stage socket functions----------------------------
     socket.on('startingPlayer', function (index) {
         // starts the game and changes state for everyone
         console.log('Starting player is index ' + index);
@@ -185,6 +192,8 @@ mounted: function () {
         app.users.push(dontVote);
         app.state = 3;
     })
+
+    // -------------------Player stage socket functions----------------------------
     socket.on('startVote', function (voteObj) {
         // updates the voting for ghosts
         console.log("updating votes for everyone")
@@ -213,24 +222,18 @@ mounted: function () {
             }
         }
     })
-    socket.on('advance', function () {
-        console.log("Host advancing round");
-        for (let i = 0; i < app.users.length; ++i) {
-            app.users[i].votes = 0;
-            app.users[i].votedIndex = -1;
+
+    // ------------------Result stage socket functions----------------------------
+    socket.on('ghostGuessed', function (guess) {
+        console.log("A Ghost has guessed");
+        console.log(guess)
+        app.totalGuessed += 1;
+        if (guess === app.gameData.topic) {
+            app.ghostsGuessed = 1;
         }
-
-        let nobodyIndex = parseInt(app.users.length - 1);
-        app.users.splice(nobodyIndex, 1);
-
-        app.hostAdvanced = true;
-        app.hasVoted = false;
-        app.state = 4;
-        setTimeout(function() {
-            console.log("Starting next round...");
-            app.state = 2;
-            app.hostAdvanced = false;
-        }, 5000);
+        else if (app.totalGuessed >= app.gameData.ghostCount) {
+            app.ghostsGuessed = 2;
+        }
     })
     socket.on('result', function (index) {
         // Goes to result screen after player is kicked
@@ -290,32 +293,44 @@ mounted: function () {
             }, 5000);
         }
     })
-    socket.on('gameData', function (data) {
-        // Gets all the game data to the users
-        console.log('Gathering all of the gameData');
-        app.users = data.users;
-        app.gameData = data;
-        let wordList = data.words;
-        app.gameCreated = true;
+    socket.on('return', function () {
+        app.users = app.usersInLobby;
+        app.player.isKicked = false;
+        app.ghostsWin = false;
+        app.playersWin = false;
+        app.hostAdvanced = false;
+        app.state = 1;
+        app.ghostsGuessed = 0;
+        app.totalGuessed = 0;
+        app.gameCreated = false;
+    })
+    // ------------------Host socket functions----------------------------
+    socket.on('advance', function () {
+        console.log("Host advancing round");
         for (let i = 0; i < app.users.length; ++i) {
-            // Add word to users array
-            app.users[i].word = wordList[0];
-            if (app.users[i].word === "ghost") {
-                app.users[i].isGhost = true;
-            } else {
-                app.users[i].isGhost = false;
-            }
-            wordList.splice(0,1);
+            app.users[i].votes = 0;
+            app.users[i].votedIndex = -1;
         }
-        for (let i = 0; i < app.users.length; ++i) {
-            if (app.users[i].id === app.player.id) {
-                app.player.word = app.users[i].word;
-                app.player.isGhost = app.users[i].isGhost;
-            }
-        }
+
+        let nobodyIndex = parseInt(app.users.length - 1);
+        app.users.splice(nobodyIndex, 1);
+
+        app.hostAdvanced = true;
+        app.hasVoted = false;
+        app.state = 4;
+        setTimeout(function() {
+            console.log("Starting next round...");
+            app.state = 2;
+            app.hostAdvanced = false;
+        }, 5000);
     })
 },
+
+// -----------------------------------------------------------METHODS---------------------------------------------------------------------
 methods: {
+
+    // -------------------Room socket functions-------------------------------
+
     createRoom() {
         this.roomName = Math.random().toString(36).substring(7);
         this.roomName = this.roomName.toUpperCase();
@@ -329,6 +344,42 @@ methods: {
             socket.emit('joinRoom', this.roomName);
         }
     },
+    setUsername: function () {
+        // Sets the username of the user and sends to server
+        console.log("Setting username")
+        if (this.username === '') {
+            alert('Please type in a valid username.');
+        } else {
+            let obj = {
+                'username': this.username,
+                'roomName': this.roomName,
+            }
+            socket.emit('join', obj);
+            this.username = '';
+            this.state = 1;
+        }
+    },
+
+    // -------------------Leaving socket functions----------------------------
+
+    leaveRoom() {
+        console.log("Leaving the room.");
+        let obj = {
+            'room': this.roomName,
+            'isHost': this.isHost,
+            'socketid': socket.id
+        }
+        app.state = 5;
+        socket.emit('leaveRoom', obj);
+    },
+    backButtonUser() {
+        console.log('user leaving joined game.')
+        this.state = 5;
+        socket.emit('leaveRoom', this.roomName);
+    },
+
+    // -------------------Game creating socket functions----------------------------
+
     deleteGame() {
         console.log('deleting game sent');
         this.createState = 0;
@@ -353,21 +404,6 @@ methods: {
             'hostSocketId': this.hostSocketId
         }
         socket.emit('updateInformation', obj);
-    },
-    setUsername: function () {
-        // Sets the username of the user and sends to server
-        console.log("Setting username")
-        if (this.username === '') {
-            alert('Please type in a valid username.');
-        } else {
-            let obj = {
-                'username': this.username,
-                'roomName': this.roomName,
-            }
-            socket.emit('join', obj);
-            this.username = '';
-            this.state = 1;
-        }
     },
     createGamePart1: function () {
         // Creates array for game words and changes state
@@ -423,8 +459,17 @@ methods: {
         } else {
             alert("Your game requires that you have " + this.gameData.playerCount.toString() + ' players.')
         }
- 
     },
+    backButtonGameCreator() {
+        if (this.createState > 0) {
+            this.createState -=1;
+        }else {
+            this.gameCreator = false; 
+        }
+    },
+
+    // -------------------Ghost stage socket functions----------------------------
+
     voteForStart(index) {
         // Ghosts vote for who should go first
         console.log("vote for " + index)
@@ -469,10 +514,9 @@ methods: {
             socket.emit('startVote', voteObj)
         }
     },
-    advance() {
-        console.log("host is advancing");
-        socket.emit('advance', this.roomName)
-    },
+
+    // -------------------Player stage socket functions----------------------------
+
     voteForKick(index) {
         // Players voting for player to kick
         console.log("vote to kick " + index)
@@ -516,16 +560,9 @@ methods: {
             socket.emit('startKick', voteObj)
         }
     },
-    leaveRoom() {
-        console.log("Leaving the room.");
-        let obj = {
-            'room': this.roomName,
-            'isHost': this.isHost,
-            'socketid': socket.id
-        }
-        app.state = 5;
-        socket.emit('leaveRoom', obj);
-    },
+
+    // ------------------Result stage socket functions----------------------------
+
     guessTopic() {
         console.log(this.player.guess)
         this.player.hasGuessed = true;
@@ -542,22 +579,17 @@ methods: {
         console.log("player is returning to lobby");
         socket.emit('return', this.roomName);
     },
+
+    // ------------------Host socket functions----------------------------
+
+    advance() {
+        console.log("host is advancing");
+        socket.emit('advance', this.roomName)
+    },
     backButtonHost() {
         console.log('host destroying made game.')
         this.state = 5;
         socket.emit('everyoneLeave', this.roomName);
-    },
-    backButtonUser() {
-        console.log('user leaving joined game.')
-        this.state = 5;
-        socket.emit('leaveRoom', this.roomName);
-    },
-    backButtonGameCreator() {
-        if (this.createState > 0) {
-            this.createState -=1;
-        }else {
-            this.gameCreator = false; 
-        }
     }
 }
 });

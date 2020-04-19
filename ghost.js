@@ -1,3 +1,5 @@
+// -------------------VARIABLES-----------------------
+
 const express = require('express')
 const app = express()
 const http = require('http').Server(app)
@@ -6,63 +8,24 @@ const io = require('socket.io')(http, {
     pingTimeout: (1000 * 60) * 30,
     cookie: false
 })
+let idNumber = 0
+let rooms = []
+let hosts = {}
+
+// -------------------SET UP ALL FILES------------------------
 
 app.use('/style', express.static(__dirname + '/style'))
 app.use('/images', express.static(__dirname + '/images'))
 app.use('/js', express.static(__dirname + '/js'))
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'))
 
-let idNumber = 0
 
-let rooms = []
-let hosts = {}
+// -------------------------------------ONCE A SOCKET HAS CONNECTED--------------------------------------
+
 io.on('connection', (socket) => {
-    console.log("someone has connected")
-    console.log(socket.id)
 
-    socket.on('disconnect', (reason) => {
-        console.log('User has disconnected');
-        console.log(reason);
-        console.log(socket.id)
-        if (socket.id in hosts) {
-            console.log('host has disconnected');
-            io.in(hosts[socket.id]).emit('hostDisconnected');
-            var index = rooms.indexOf(hosts[socket.id]);
-            if (index !== -1) {
-                rooms.splice(index, 1);
-            }
-            delete hosts[socket.id];
-        } else {
-            io.emit('leaveRoom', socket.id);
-        }
-    })
-    socket.on('deleteGame', (obj) => {
-        console.log("deleting game");
-        io.in(obj.roomName).emit('deleteGame', obj);
-    })
-    socket.on('advance', (room) => {
-        console.log("Host advancing game");
-        io.in(room).emit('advance');
-    })
-    socket.on('everyoneLeave', (room) => {
-        console.log("exiting room");
-        socket.leave(room);
-        if (socket.id in hosts) {
-            console.log('host has disconnected');
-            io.in(hosts[socket.id]).emit('hostDisconnected');
-            var index = rooms.indexOf(hosts[socket.id]);
-            if (index !== -1) {
-                rooms.splice(index, 1);
-            }
-            delete hosts[socket.id];
-        }
-    })
-    socket.on('return', (room) => {
-        console.log("Returning to menu");
-        io.in(room).emit('return');
-    })
+    // -------------------Room socket functions-------------------------------
 
-    // STAGES 5-7
     socket.on('createRoom', (roomName) => {
         if (rooms.includes(roomName)) {
             console.log('Error: room name already in use')
@@ -93,10 +56,6 @@ io.on('connection', (socket) => {
             socket.emit('noRoom', roomName);
         }
     }) 
-
-    socket.on('updateInformation', (obj) => {
-        io.in(obj.roomName).emit('updateInformation', obj);
-    })
     socket.on('leaveRoom', (obj) => {
         socket.leave(obj.room);
         if (obj.isHost) {
@@ -105,7 +64,6 @@ io.on('connection', (socket) => {
             io.in(obj.room).emit('leaveRoom', obj.socketid);
         }
     })
-    // STAGE 0
     socket.on('join', (obj) => {
         socket.username = obj.username;
         console.log(socket.username)
@@ -138,8 +96,46 @@ io.on('connection', (socket) => {
         idNumber += 1
     })
 
-    socket.on('ghostGuessed', (obj) => {
-        io.in(obj.room).emit('ghostGuessed', obj.guess);
+    // -------------------Leaving socket functions----------------------------
+
+    socket.on('disconnect', (reason) => {
+        console.log('User has disconnected');
+        console.log(reason);
+        console.log(socket.id)
+        if (socket.id in hosts) {
+            console.log('host has disconnected');
+            io.in(hosts[socket.id]).emit('hostDisconnected');
+            var index = rooms.indexOf(hosts[socket.id]);
+            if (index !== -1) {
+                rooms.splice(index, 1);
+            }
+            delete hosts[socket.id];
+        } else {
+            io.emit('leaveRoom', socket.id);
+        }
+    })
+    socket.on('everyoneLeave', (room) => {
+        console.log("exiting room");
+        socket.leave(room);
+        if (socket.id in hosts) {
+            console.log('host has disconnected');
+            io.in(hosts[socket.id]).emit('hostDisconnected');
+            var index = rooms.indexOf(hosts[socket.id]);
+            if (index !== -1) {
+                rooms.splice(index, 1);
+            }
+            delete hosts[socket.id];
+        }
+    })
+
+    // -------------------Game creating socket functions----------------------------
+
+    socket.on('deleteGame', (obj) => {
+        console.log("deleting game");
+        io.in(obj.roomName).emit('deleteGame', obj);
+    })
+    socket.on('updateInformation', (obj) => {
+        io.in(obj.roomName).emit('updateInformation', obj);
     })
     socket.on('gameData', (data) => {
         data.words.sort(() => Math.random() - 0.5);
@@ -148,9 +144,15 @@ io.on('connection', (socket) => {
     socket.on('start', (startObj) => {
         io.in(startObj.roomName).emit('start', startObj); 
     })
+
+    // -------------------Ghost stage socket functions----------------------------
+
     socket.on('startingPlayer', (obj) => {
         io.in(obj.roomName).emit('startingPlayer', obj.index); 
     })
+
+    // -------------------Player stage socket functions----------------------------
+
     socket.on('startVote', (voteObj) => {
         console.log('There are this many votes: ' + voteObj.votes)
         io.in(voteObj.roomName).emit('startVote', voteObj);
@@ -159,10 +161,29 @@ io.on('connection', (socket) => {
         console.log('There are this many votes to kick: ' + voteObj.votes)
         io.in(voteObj.roomName).emit('startKick', voteObj);
     })
+
+    // ------------------Result stage socket functions----------------------------
+
+    socket.on('return', (room) => {
+        console.log("Returning to menu");
+        io.in(room).emit('return');
+    })
     socket.on('result', (obj) => {
         console.log('Player being kicked: ' + obj.index)
         io.in(obj.roomName).emit('result', obj.index);
     })
+    socket.on('ghostGuessed', (obj) => {
+        io.in(obj.room).emit('ghostGuessed', obj.guess);
+    })
+
+    // ------------------Host socket functions----------------------------
+
+    socket.on('advance', (room) => {
+        console.log("Host advancing game");
+        io.in(room).emit('advance');
+    })
 })
+
+// -----------------LISTEN ON PORT 80-----------------
 
 http.listen(80, () => console.log('listening on port 80'))
