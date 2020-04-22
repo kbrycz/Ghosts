@@ -186,4 +186,4 @@ io.on('connection', (socket) => {
 
 // -----------------LISTEN ON PORT 80-----------------
 
-http.listen(80, () => console.log('listening on port 80'))
+http.listen(3000, () => console.log('listening on port 80'))
