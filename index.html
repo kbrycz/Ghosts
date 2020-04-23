@@ -165,7 +165,17 @@
                         <div class="backButton" v-if="gameCreator === true">
                             <button class="btn btn-light" v-on:click="backButtonGameCreator">Back</button>
                         </div>
-                    
+                        <div class="playerRowStart row" v-if="gameCreator === false">
+                            <div class="playerRow" v-for="user in users">
+                                <div v-if="user.id === player.id">
+                                    <h4 v-if="isHost">{{user.name}} (You, Host)</h4>
+                                    <h4 v-else>{{user.name}} (You)</h4>
+                                </div>
+                                <div v-else>
+                                    <h4>{{user.name}}</h4>
+                                </div>
+                            </div>
+                        </div>
                         <div class="inputNumbers" v-else>
                             <div v-if="createState === 0">
                                 <form @submit.prevent="createGamePart1">
