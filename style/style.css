@@ -38,7 +38,7 @@ body {
     letter-spacing: 6px;
     font-size: 15px;
     bottom: 8px;
-    right: 16px;
+    right: 25px;
     font-family: Montserrat, Helvetica;
 }
 .roomkey {
@@ -46,7 +46,7 @@ body {
     letter-spacing: 6px;
     font-size: 15px;
     top: 8px;
-    right: 16px;
+    right: 25px;
     font-family: Montserrat, Helvetica;
 }
 .deleteGame {
@@ -54,21 +54,21 @@ body {
     letter-spacing: 6px;
     font-size: 15px;
     top: 10px;
-    left: 16px;
+    left: 25px;
 }
 .leave {
     position: absolute;
     letter-spacing: 6px;
     font-size: 15px;
     bottom: 10px;
-    left: 16px;
+    left: 25px;
 }
 .backButton {
     position: absolute;
     letter-spacing: 6px;
     font-size: 15px;
-    top: 20px;
-    left: 20px;
+    top: 25px;
+    left: 25px;
 }
 
 /* -------------------HOME SCREEN STYLING------------------ */
