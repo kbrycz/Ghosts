@@ -2,7 +2,7 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: Creepster, Montserrat, Helvetica, sans-serif;
+    font-family: 'Bangers', cursive;
     color: #f4f0f8;
     background: #41295a;  /* fallback for old browsers */
     background: -webkit-linear-gradient(to right, #2F0743, #41295a);
@@ -39,7 +39,6 @@ body {
     font-size: 15px;
     bottom: 8px;
     right: 25px;
-    font-family: Montserrat, Helvetica;
 }
 .roomkey {
     position: absolute;
@@ -47,7 +46,6 @@ body {
     font-size: 15px;
     top: 8px;
     right: 25px;
-    font-family: Montserrat, Helvetica;
 }
 .deleteGame {
     position: absolute;
@@ -103,7 +101,6 @@ h1 {
 }
 .login-view h5 {
     font-size: 14px;
-    font-family: Montserrat, Helvetica, sans-serif;
     margin-top: 30px;
     margin-bottom: 30px;
 }
@@ -125,7 +122,6 @@ h1 {
 .createScreen h4 {
     margin-top: 30px;
     margin-bottom: 30px;
-    font-family: Montserrat, Helvetica;
     letter-spacing: 7px;
 }
 .createButton {
@@ -133,7 +129,6 @@ h1 {
     position: relative;
 }
 .inputNumbers {
-    font-family: Montserrat, Helvetica;
     margin: auto;
     text-align: right;
 }
@@ -155,7 +150,6 @@ h1 {
     height: 40px;
     margin-right: 10%;
     margin-top: 15px;
-    font-family: Creepster;
 }
 .soloButton {
     width: 300px;
@@ -183,7 +177,6 @@ h1 {
     display: flex;
     align-items: center;
     position: relative;
-    font-family: Montserrat, Helvetica;
 }
 .playerRow:first-child {
     border-top: 2px solid #9e7bc300;
@@ -207,7 +200,6 @@ h1 {
     text-align: center;
 }
 .ghostChoosing h4 {
-    font-family: Montserrat, Helvetica;
     line-height: 20px;
     font-size: 14px;
     text-align: center;
@@ -217,7 +209,6 @@ h1 {
     margin-top: 10px;
 }
 .playerChoosing h4 {
-    font-family: Montserrat, Helvetica;
     line-height: 20px;
     font-size: 14px;
     text-align: center;
