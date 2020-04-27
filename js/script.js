@@ -37,7 +37,7 @@ data: {
 // -----------------------------------------------------------APPLICATION OPENING FUNCTIONS---------------------------------------------------------------------
 created: function () {
     // Current server that we are connecting to
-    socket = io('ws://localhost:8081');
+    socket = io('ws://ghostsonline.me:8081');
     if (window.location.search !== '') {
         let room = window.location.search.toString();
         room = room.toUpperCase();
